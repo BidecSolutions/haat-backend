@@ -1,0 +1,1552 @@
+{
+  "regions": [
+    {
+      "value": 198121,
+      "label": "Al Bahah",
+      "governorates": [
+        {
+          "value": 198162,
+          "label": "Adam",
+          "region_id": 198121
+        },
+        {
+          "value": 198263,
+          "label": "Al Aqiq",
+          "region_id": 198121
+        },
+        {
+          "value": 198161,
+          "label": "Al Ardiyat",
+          "region_id": 198121
+        },
+        {
+          "value": 198259,
+          "label": "Al Bahah",
+          "region_id": 198121
+        },
+        {
+          "value": 198268,
+          "label": "Al Hajrah",
+          "region_id": 198121
+        },
+        {
+          "value": 198150,
+          "label": "Al Lith",
+          "region_id": 198121
+        },
+        {
+          "value": 198261,
+          "label": "Al Mandaq",
+          "region_id": 198121
+        },
+        {
+          "value": 198262,
+          "label": "Al Mukhwah",
+          "region_id": 198121
+        },
+        {
+          "value": 198265,
+          "label": "Al Qara",
+          "region_id": 198121
+        },
+        {
+          "value": 198149,
+          "label": "Al Qunfudhah",
+          "region_id": 198121
+        },
+        {
+          "value": 198207,
+          "label": "Balqarn",
+          "region_id": 198121
+        },
+        {
+          "value": 198266,
+          "label": "Bani Hasan",
+          "region_id": 198121
+        },
+        {
+          "value": 198260,
+          "label": "Biljurashi",
+          "region_id": 198121
+        },
+        {
+          "value": 198199,
+          "label": "Bishah",
+          "region_id": 198121
+        },
+        {
+          "value": 198267,
+          "label": "Farat Ghamid Az Zinad",
+          "region_id": 198121
+        },
+        {
+          "value": 198160,
+          "label": "Maysan",
+          "region_id": 198121
+        },
+        {
+          "value": 198264,
+          "label": "Qilwah",
+          "region_id": 198121
+        },
+        {
+          "value": 198156,
+          "label": "Ranyah",
+          "region_id": 198121
+        },
+        {
+          "value": 198157,
+          "label": "Turubah",
+          "region_id": 198121
+        }
+      ]
+    },
+    {
+      "value": 198122,
+      "label": "Al Jawf",
+      "governorates": [
+        {
+          "value": 198270,
+          "label": "Al Qurayyat",
+          "region_id": 198122
+        },
+        {
+          "value": 198234,
+          "label": "Al Uwayqilah",
+          "region_id": 198122
+        },
+        {
+          "value": 198231,
+          "label": "Arar",
+          "region_id": 198122
+        },
+        {
+          "value": 198223,
+          "label": "Baqa",
+          "region_id": 198122
+        },
+        {
+          "value": 198271,
+          "label": "Dawamat Al Jandal",
+          "region_id": 198122
+        },
+        {
+          "value": 198222,
+          "label": "Hail",
+          "region_id": 198122
+        },
+        {
+          "value": 198227,
+          "label": "Mawqaq",
+          "region_id": 198122
+        },
+        {
+          "value": 198269,
+          "label": "Sakaka",
+          "region_id": 198122
+        },
+        {
+          "value": 198215,
+          "label": "Tabuk",
+          "region_id": 198122
+        },
+        {
+          "value": 198218,
+          "label": "Tayma",
+          "region_id": 198122
+        },
+        {
+          "value": 198272,
+          "label": "Tubarjal",
+          "region_id": 198122
+        },
+        {
+          "value": 198233,
+          "label": "Turayf",
+          "region_id": 198122
+        }
+      ]
+    },
+    {
+      "value": 198112,
+      "label": "Al Madinah Al Munawwarah",
+      "governorates": [
+        {
+          "value": 198134,
+          "label": "Afif",
+          "region_id": 198112
+        },
+        {
+          "value": 198229,
+          "label": "Al Hait",
+          "region_id": 198112
+        },
+        {
+          "value": 198169,
+          "label": "Al Hinakiyah",
+          "region_id": 198112
+        },
+        {
+          "value": 198171,
+          "label": "Al Is",
+          "region_id": 198112
+        },
+        {
+          "value": 198154,
+          "label": "Al Kamil",
+          "region_id": 198112
+        },
+        {
+          "value": 198163,
+          "label": "Al Madinah Al Munawwarah",
+          "region_id": 198112
+        },
+        {
+          "value": 198166,
+          "label": "Al Mahd",
+          "region_id": 198112
+        },
+        {
+          "value": 198159,
+          "label": "Al Muwayh",
+          "region_id": 198112
+        },
+        {
+          "value": 198148,
+          "label": "Al Taif",
+          "region_id": 198112
+        },
+        {
+          "value": 198165,
+          "label": "Al Ula",
+          "region_id": 198112
+        },
+        {
+          "value": 198216,
+          "label": "Al Wajh",
+          "region_id": 198112
+        },
+        {
+          "value": 198179,
+          "label": "An Nabhaniyah",
+          "region_id": 198112
+        },
+        {
+          "value": 198230,
+          "label": "As Sulaymi",
+          "region_id": 198112
+        },
+        {
+          "value": 198226,
+          "label": "Ash Shamli",
+          "region_id": 198112
+        },
+        {
+          "value": 198167,
+          "label": "Badr",
+          "region_id": 198112
+        },
+        {
+          "value": 198184,
+          "label": "Dariyah",
+          "region_id": 198112
+        },
+        {
+          "value": 198168,
+          "label": "Khaybar",
+          "region_id": 198112
+        },
+        {
+          "value": 198153,
+          "label": "Khulays",
+          "region_id": 198112
+        },
+        {
+          "value": 198151,
+          "label": "Rabigh",
+          "region_id": 198112
+        },
+        {
+          "value": 198215,
+          "label": "Tabuk",
+          "region_id": 198112
+        },
+        {
+          "value": 198218,
+          "label": "Tayma",
+          "region_id": 198112
+        },
+        {
+          "value": 198219,
+          "label": "Umluj",
+          "region_id": 198112
+        },
+        {
+          "value": 198183,
+          "label": "Uqlat As Suqur",
+          "region_id": 198112
+        },
+        {
+          "value": 198170,
+          "label": "Wadi Al Fara",
+          "region_id": 198112
+        },
+        {
+          "value": 198164,
+          "label": "Yanbu",
+          "region_id": 198112
+        }
+      ]
+    },
+    {
+      "value": 198113,
+      "label": "Al Qaseem",
+      "governorates": [
+        {
+          "value": 198126,
+          "label": "Ad Duwadimi",
+          "region_id": 198113
+        },
+        {
+          "value": 198134,
+          "label": "Afif",
+          "region_id": 198113
+        },
+        {
+          "value": 198178,
+          "label": "Al Asyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198177,
+          "label": "Al Badai",
+          "region_id": 198113
+        },
+        {
+          "value": 198176,
+          "label": "Al Bukayriyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198142,
+          "label": "Al Ghat",
+          "region_id": 198113
+        },
+        {
+          "value": 198169,
+          "label": "Al Hinakiyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198127,
+          "label": "Al Majmaah",
+          "region_id": 198113
+        },
+        {
+          "value": 198175,
+          "label": "Al Midhnab",
+          "region_id": 198113
+        },
+        {
+          "value": 198179,
+          "label": "An Nabhaniyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198174,
+          "label": "Ar Rass",
+          "region_id": 198113
+        },
+        {
+          "value": 198230,
+          "label": "As Sulaymi",
+          "region_id": 198113
+        },
+        {
+          "value": 198182,
+          "label": "Ash Shimasiyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198225,
+          "label": "Ash Shinan",
+          "region_id": 198113
+        },
+        {
+          "value": 198131,
+          "label": "Az Zulfi",
+          "region_id": 198113
+        },
+        {
+          "value": 198223,
+          "label": "Baqa",
+          "region_id": 198113
+        },
+        {
+          "value": 198172,
+          "label": "Buraydah",
+          "region_id": 198113
+        },
+        {
+          "value": 198184,
+          "label": "Dariyah",
+          "region_id": 198113
+        },
+        {
+          "value": 198187,
+          "label": "Hafar Al Batin",
+          "region_id": 198113
+        },
+        {
+          "value": 198232,
+          "label": "Rafha",
+          "region_id": 198113
+        },
+        {
+          "value": 198181,
+          "label": "Riyadh Al Khabra",
+          "region_id": 198113
+        },
+        {
+          "value": 198132,
+          "label": "Shaqra",
+          "region_id": 198113
+        },
+        {
+          "value": 198228,
+          "label": "Simira",
+          "region_id": 198113
+        },
+        {
+          "value": 198173,
+          "label": "Unayzah",
+          "region_id": 198113
+        },
+        {
+          "value": 198183,
+          "label": "Uqlat As Suqur",
+          "region_id": 198113
+        },
+        {
+          "value": 198180,
+          "label": "Uyun Al Jiwa",
+          "region_id": 198113
+        }
+      ]
+    },
+    {
+      "value": 198110,
+      "label": "Ar Riyad",
+      "governorates": [
+        {
+          "value": 198144,
+          "label": "Ad Dilam",
+          "region_id": 198110
+        },
+        {
+          "value": 198124,
+          "label": "Ad Diriyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198126,
+          "label": "Ad Duwadimi",
+          "region_id": 198110
+        },
+        {
+          "value": 198134,
+          "label": "Afif",
+          "region_id": 198110
+        },
+        {
+          "value": 198130,
+          "label": "Al Aflaj",
+          "region_id": 198110
+        },
+        {
+          "value": 198186,
+          "label": "Al Ahsa",
+          "region_id": 198110
+        },
+        {
+          "value": 198178,
+          "label": "Al Asyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198142,
+          "label": "Al Ghat",
+          "region_id": 198110
+        },
+        {
+          "value": 198141,
+          "label": "Al Hariq",
+          "region_id": 198110
+        },
+        {
+          "value": 198169,
+          "label": "Al Hinakiyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198125,
+          "label": "Al Kharj",
+          "region_id": 198110
+        },
+        {
+          "value": 198155,
+          "label": "Al Khurmah",
+          "region_id": 198110
+        },
+        {
+          "value": 198166,
+          "label": "Al Mahd",
+          "region_id": 198110
+        },
+        {
+          "value": 198127,
+          "label": "Al Majmaah",
+          "region_id": 198110
+        },
+        {
+          "value": 198175,
+          "label": "Al Midhnab",
+          "region_id": 198110
+        },
+        {
+          "value": 198159,
+          "label": "Al Muwayh",
+          "region_id": 198110
+        },
+        {
+          "value": 198137,
+          "label": "Al Muzahimiyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198128,
+          "label": "Al Quwayiyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198174,
+          "label": "Ar Rass",
+          "region_id": 198110
+        },
+        {
+          "value": 198145,
+          "label": "Ar Rayn",
+          "region_id": 198110
+        },
+        {
+          "value": 198123,
+          "label": "Ar Riyad",
+          "region_id": 198110
+        },
+        {
+          "value": 198135,
+          "label": "As Sulayyil",
+          "region_id": 198110
+        },
+        {
+          "value": 198182,
+          "label": "Ash Shimasiyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198131,
+          "label": "Az Zulfi",
+          "region_id": 198110
+        },
+        {
+          "value": 198172,
+          "label": "Buraydah",
+          "region_id": 198110
+        },
+        {
+          "value": 198184,
+          "label": "Dariyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198136,
+          "label": "Duruma",
+          "region_id": 198110
+        },
+        {
+          "value": 198187,
+          "label": "Hafar Al Batin",
+          "region_id": 198110
+        },
+        {
+          "value": 198133,
+          "label": "Hawtat Bani Tamim",
+          "region_id": 198110
+        },
+        {
+          "value": 198140,
+          "label": "Huraymila",
+          "region_id": 198110
+        },
+        {
+          "value": 198143,
+          "label": "Marat",
+          "region_id": 198110
+        },
+        {
+          "value": 198195,
+          "label": "Qaryah Al Ulya",
+          "region_id": 198110
+        },
+        {
+          "value": 198156,
+          "label": "Ranyah",
+          "region_id": 198110
+        },
+        {
+          "value": 198138,
+          "label": "Rumah",
+          "region_id": 198110
+        },
+        {
+          "value": 198132,
+          "label": "Shaqra",
+          "region_id": 198110
+        },
+        {
+          "value": 198253,
+          "label": "Sharurah",
+          "region_id": 198110
+        },
+        {
+          "value": 198203,
+          "label": "Tathlith",
+          "region_id": 198110
+        },
+        {
+          "value": 198139,
+          "label": "Thadiq",
+          "region_id": 198110
+        },
+        {
+          "value": 198129,
+          "label": "Wadi Ad Dawasir",
+          "region_id": 198110
+        },
+        {
+          "value": 198256,
+          "label": "Yadamah",
+          "region_id": 198110
+        }
+      ]
+    },
+    {
+      "value": 198115,
+      "label": "Aseer",
+      "governorates": [
+        {
+          "value": 198197,
+          "label": "Abha",
+          "region_id": 198115
+        },
+        {
+          "value": 198244,
+          "label": "Ad Dair",
+          "region_id": 198115
+        },
+        {
+          "value": 198248,
+          "label": "Ad Darb",
+          "region_id": 198115
+        },
+        {
+          "value": 198205,
+          "label": "Ahad Rufaydah",
+          "region_id": 198115
+        },
+        {
+          "value": 198214,
+          "label": "Al Amoah",
+          "region_id": 198115
+        },
+        {
+          "value": 198263,
+          "label": "Al Aqiq",
+          "region_id": 198115
+        },
+        {
+          "value": 198161,
+          "label": "Al Ardiyat",
+          "region_id": 198115
+        },
+        {
+          "value": 198210,
+          "label": "Al Birk",
+          "region_id": 198115
+        },
+        {
+          "value": 198208,
+          "label": "Al Majardah",
+          "region_id": 198115
+        },
+        {
+          "value": 198149,
+          "label": "Al Qunfudhah",
+          "region_id": 198115
+        },
+        {
+          "value": 198213,
+          "label": "Al-Harjah",
+          "region_id": 198115
+        },
+        {
+          "value": 198200,
+          "label": "An Namas",
+          "region_id": 198115
+        },
+        {
+          "value": 198241,
+          "label": "Ar Rayth",
+          "region_id": 198115
+        },
+        {
+          "value": 198255,
+          "label": "Badr Al Janub",
+          "region_id": 198115
+        },
+        {
+          "value": 198207,
+          "label": "Balqarn",
+          "region_id": 198115
+        },
+        {
+          "value": 198211,
+          "label": "Bariq",
+          "region_id": 198115
+        },
+        {
+          "value": 198242,
+          "label": "Baysh",
+          "region_id": 198115
+        },
+        {
+          "value": 198260,
+          "label": "Biljurashi",
+          "region_id": 198115
+        },
+        {
+          "value": 198199,
+          "label": "Bishah",
+          "region_id": 198115
+        },
+        {
+          "value": 198198,
+          "label": "Khamis Mushayt",
+          "region_id": 198115
+        },
+        {
+          "value": 198201,
+          "label": "Muhayil",
+          "region_id": 198115
+        },
+        {
+          "value": 198252,
+          "label": "Najran",
+          "region_id": 198115
+        },
+        {
+          "value": 198156,
+          "label": "Ranyah",
+          "region_id": 198115
+        },
+        {
+          "value": 198204,
+          "label": "Rijal Al Ma",
+          "region_id": 198115
+        },
+        {
+          "value": 198202,
+          "label": "Sarat Abidah",
+          "region_id": 198115
+        },
+        {
+          "value": 198212,
+          "label": "Tanumah",
+          "region_id": 198115
+        },
+        {
+          "value": 198209,
+          "label": "Tarib",
+          "region_id": 198115
+        },
+        {
+          "value": 198203,
+          "label": "Tathlith",
+          "region_id": 198115
+        },
+        {
+          "value": 198257,
+          "label": "Thar",
+          "region_id": 198115
+        },
+        {
+          "value": 198129,
+          "label": "Wadi Ad Dawasir",
+          "region_id": 198115
+        },
+        {
+          "value": 198256,
+          "label": "Yadamah",
+          "region_id": 198115
+        },
+        {
+          "value": 198206,
+          "label": "Zahran Al Janub",
+          "region_id": 198115
+        }
+      ]
+    },
+    {
+      "value": 198114,
+      "label": "Eastern Region",
+      "governorates": [
+        {
+          "value": 198185,
+          "label": "Ad Dammam",
+          "region_id": 198114
+        },
+        {
+          "value": 198130,
+          "label": "Al Aflaj",
+          "region_id": 198114
+        },
+        {
+          "value": 198186,
+          "label": "Al Ahsa",
+          "region_id": 198114
+        },
+        {
+          "value": 198178,
+          "label": "Al Asyah",
+          "region_id": 198114
+        },
+        {
+          "value": 198188,
+          "label": "Al Jubayl",
+          "region_id": 198114
+        },
+        {
+          "value": 198191,
+          "label": "Al Khafji",
+          "region_id": 198114
+        },
+        {
+          "value": 198125,
+          "label": "Al Kharj",
+          "region_id": 198114
+        },
+        {
+          "value": 198190,
+          "label": "Al Khubar",
+          "region_id": 198114
+        },
+        {
+          "value": 198127,
+          "label": "Al Majmaah",
+          "region_id": 198114
+        },
+        {
+          "value": 198194,
+          "label": "Al Nuayriyah",
+          "region_id": 198114
+        },
+        {
+          "value": 198189,
+          "label": "Al Qatif",
+          "region_id": 198114
+        },
+        {
+          "value": 198196,
+          "label": "Al Udayd",
+          "region_id": 198114
+        },
+        {
+          "value": 198135,
+          "label": "As Sulayyil",
+          "region_id": 198114
+        },
+        {
+          "value": 198193,
+          "label": "Buqayq",
+          "region_id": 198114
+        },
+        {
+          "value": 198187,
+          "label": "Hafar Al Batin",
+          "region_id": 198114
+        },
+        {
+          "value": 198195,
+          "label": "Qaryah Al Ulya",
+          "region_id": 198114
+        },
+        {
+          "value": 198232,
+          "label": "Rafha",
+          "region_id": 198114
+        },
+        {
+          "value": 198192,
+          "label": "Ras Tannurah",
+          "region_id": 198114
+        },
+        {
+          "value": 198138,
+          "label": "Rumah",
+          "region_id": 198114
+        },
+        {
+          "value": 198253,
+          "label": "Sharurah",
+          "region_id": 198114
+        }
+      ]
+    },
+    {
+      "value": 198117,
+      "label": "Hail",
+      "governorates": [
+        {
+          "value": 198178,
+          "label": "Al Asyah",
+          "region_id": 198117
+        },
+        {
+          "value": 198176,
+          "label": "Al Bukayriyah",
+          "region_id": 198117
+        },
+        {
+          "value": 198224,
+          "label": "Al Ghazalah",
+          "region_id": 198117
+        },
+        {
+          "value": 198229,
+          "label": "Al Hait",
+          "region_id": 198117
+        },
+        {
+          "value": 198169,
+          "label": "Al Hinakiyah",
+          "region_id": 198117
+        },
+        {
+          "value": 198234,
+          "label": "Al Uwayqilah",
+          "region_id": 198117
+        },
+        {
+          "value": 198230,
+          "label": "As Sulaymi",
+          "region_id": 198117
+        },
+        {
+          "value": 198226,
+          "label": "Ash Shamli",
+          "region_id": 198117
+        },
+        {
+          "value": 198225,
+          "label": "Ash Shinan",
+          "region_id": 198117
+        },
+        {
+          "value": 198223,
+          "label": "Baqa",
+          "region_id": 198117
+        },
+        {
+          "value": 198172,
+          "label": "Buraydah",
+          "region_id": 198117
+        },
+        {
+          "value": 198271,
+          "label": "Dawamat Al Jandal",
+          "region_id": 198117
+        },
+        {
+          "value": 198222,
+          "label": "Hail",
+          "region_id": 198117
+        },
+        {
+          "value": 198168,
+          "label": "Khaybar",
+          "region_id": 198117
+        },
+        {
+          "value": 198227,
+          "label": "Mawqaq",
+          "region_id": 198117
+        },
+        {
+          "value": 198232,
+          "label": "Rafha",
+          "region_id": 198117
+        },
+        {
+          "value": 198181,
+          "label": "Riyadh Al Khabra",
+          "region_id": 198117
+        },
+        {
+          "value": 198269,
+          "label": "Sakaka",
+          "region_id": 198117
+        },
+        {
+          "value": 198228,
+          "label": "Simira",
+          "region_id": 198117
+        },
+        {
+          "value": 198218,
+          "label": "Tayma",
+          "region_id": 198117
+        },
+        {
+          "value": 198183,
+          "label": "Uqlat As Suqur",
+          "region_id": 198117
+        },
+        {
+          "value": 198180,
+          "label": "Uyun Al Jiwa",
+          "region_id": 198117
+        }
+      ]
+    },
+    {
+      "value": 198119,
+      "label": "Jazan",
+      "governorates": [
+        {
+          "value": 198197,
+          "label": "Abha",
+          "region_id": 198119
+        },
+        {
+          "value": 198237,
+          "label": "Abu Arish",
+          "region_id": 198119
+        },
+        {
+          "value": 198244,
+          "label": "Ad Dair",
+          "region_id": 198119
+        },
+        {
+          "value": 198248,
+          "label": "Ad Darb",
+          "region_id": 198119
+        },
+        {
+          "value": 198245,
+          "label": "Ahad Al Masarihah",
+          "region_id": 198119
+        },
+        {
+          "value": 198247,
+          "label": "Al Aridah",
+          "region_id": 198119
+        },
+        {
+          "value": 198246,
+          "label": "Al Aydabi",
+          "region_id": 198119
+        },
+        {
+          "value": 198239,
+          "label": "Al Harth",
+          "region_id": 198119
+        },
+        {
+          "value": 198241,
+          "label": "Ar Rayth",
+          "region_id": 198119
+        },
+        {
+          "value": 198249,
+          "label": "At Tuwal",
+          "region_id": 198119
+        },
+        {
+          "value": 198242,
+          "label": "Baysh",
+          "region_id": 198119
+        },
+        {
+          "value": 198240,
+          "label": "Damad",
+          "region_id": 198119
+        },
+        {
+          "value": 198243,
+          "label": "Farasan",
+          "region_id": 198119
+        },
+        {
+          "value": 198251,
+          "label": "Fayfa",
+          "region_id": 198119
+        },
+        {
+          "value": 198250,
+          "label": "Harub",
+          "region_id": 198119
+        },
+        {
+          "value": 198235,
+          "label": "Jazan",
+          "region_id": 198119
+        },
+        {
+          "value": 198204,
+          "label": "Rijal Al Ma",
+          "region_id": 198119
+        },
+        {
+          "value": 198236,
+          "label": "Sabya",
+          "region_id": 198119
+        },
+        {
+          "value": 198238,
+          "label": "Samtah",
+          "region_id": 198119
+        },
+        {
+          "value": 198202,
+          "label": "Sarat Abidah",
+          "region_id": 198119
+        }
+      ]
+    },
+    {
+      "value": 198111,
+      "label": "Makkah Al Mukarramah",
+      "governorates": [
+        {
+          "value": 198162,
+          "label": "Adam",
+          "region_id": 198111
+        },
+        {
+          "value": 198134,
+          "label": "Afif",
+          "region_id": 198111
+        },
+        {
+          "value": 198263,
+          "label": "Al Aqiq",
+          "region_id": 198111
+        },
+        {
+          "value": 198161,
+          "label": "Al Ardiyat",
+          "region_id": 198111
+        },
+        {
+          "value": 198268,
+          "label": "Al Hajrah",
+          "region_id": 198111
+        },
+        {
+          "value": 198152,
+          "label": "Al Jumum",
+          "region_id": 198111
+        },
+        {
+          "value": 198154,
+          "label": "Al Kamil",
+          "region_id": 198111
+        },
+        {
+          "value": 198155,
+          "label": "Al Khurmah",
+          "region_id": 198111
+        },
+        {
+          "value": 198150,
+          "label": "Al Lith",
+          "region_id": 198111
+        },
+        {
+          "value": 198166,
+          "label": "Al Mahd",
+          "region_id": 198111
+        },
+        {
+          "value": 198208,
+          "label": "Al Majardah",
+          "region_id": 198111
+        },
+        {
+          "value": 198261,
+          "label": "Al Mandaq",
+          "region_id": 198111
+        },
+        {
+          "value": 198262,
+          "label": "Al Mukhwah",
+          "region_id": 198111
+        },
+        {
+          "value": 198159,
+          "label": "Al Muwayh",
+          "region_id": 198111
+        },
+        {
+          "value": 198265,
+          "label": "Al Qara",
+          "region_id": 198111
+        },
+        {
+          "value": 198149,
+          "label": "Al Qunfudhah",
+          "region_id": 198111
+        },
+        {
+          "value": 198148,
+          "label": "Al Taif",
+          "region_id": 198111
+        },
+        {
+          "value": 198167,
+          "label": "Badr",
+          "region_id": 198111
+        },
+        {
+          "value": 198158,
+          "label": "Bahrah",
+          "region_id": 198111
+        },
+        {
+          "value": 198207,
+          "label": "Balqarn",
+          "region_id": 198111
+        },
+        {
+          "value": 198211,
+          "label": "Bariq",
+          "region_id": 198111
+        },
+        {
+          "value": 198260,
+          "label": "Biljurashi",
+          "region_id": 198111
+        },
+        {
+          "value": 198199,
+          "label": "Bishah",
+          "region_id": 198111
+        },
+        {
+          "value": 198267,
+          "label": "Farat Ghamid Az Zinad",
+          "region_id": 198111
+        },
+        {
+          "value": 198147,
+          "label": "Jiddah",
+          "region_id": 198111
+        },
+        {
+          "value": 198153,
+          "label": "Khulays",
+          "region_id": 198111
+        },
+        {
+          "value": 198146,
+          "label": "Makkah Al Mukarramah",
+          "region_id": 198111
+        },
+        {
+          "value": 198160,
+          "label": "Maysan",
+          "region_id": 198111
+        },
+        {
+          "value": 198201,
+          "label": "Muhayil",
+          "region_id": 198111
+        },
+        {
+          "value": 198264,
+          "label": "Qilwah",
+          "region_id": 198111
+        },
+        {
+          "value": 198151,
+          "label": "Rabigh",
+          "region_id": 198111
+        },
+        {
+          "value": 198156,
+          "label": "Ranyah",
+          "region_id": 198111
+        },
+        {
+          "value": 198203,
+          "label": "Tathlith",
+          "region_id": 198111
+        },
+        {
+          "value": 198157,
+          "label": "Turubah",
+          "region_id": 198111
+        },
+        {
+          "value": 198129,
+          "label": "Wadi Ad Dawasir",
+          "region_id": 198111
+        },
+        {
+          "value": 198170,
+          "label": "Wadi Al Fara",
+          "region_id": 198111
+        }
+      ]
+    },
+    {
+      "value": 198120,
+      "label": "Najran",
+      "governorates": [
+        {
+          "value": 198185,
+          "label": "Ad Dammam",
+          "region_id": 198120
+        },
+        {
+          "value": 198186,
+          "label": "Al Ahsa",
+          "region_id": 198120
+        },
+        {
+          "value": 198214,
+          "label": "Al Amoah",
+          "region_id": 198120
+        },
+        {
+          "value": 198213,
+          "label": "Al-Harjah",
+          "region_id": 198120
+        },
+        {
+          "value": 198135,
+          "label": "As Sulayyil",
+          "region_id": 198120
+        },
+        {
+          "value": 198255,
+          "label": "Badr Al Janub",
+          "region_id": 198120
+        },
+        {
+          "value": 198254,
+          "label": "Hubuna",
+          "region_id": 198120
+        },
+        {
+          "value": 198258,
+          "label": "Khubash",
+          "region_id": 198120
+        },
+        {
+          "value": 198252,
+          "label": "Najran",
+          "region_id": 198120
+        },
+        {
+          "value": 198253,
+          "label": "Sharurah",
+          "region_id": 198120
+        },
+        {
+          "value": 198203,
+          "label": "Tathlith",
+          "region_id": 198120
+        },
+        {
+          "value": 198257,
+          "label": "Thar",
+          "region_id": 198120
+        },
+        {
+          "value": 198129,
+          "label": "Wadi Ad Dawasir",
+          "region_id": 198120
+        },
+        {
+          "value": 198256,
+          "label": "Yadamah",
+          "region_id": 198120
+        },
+        {
+          "value": 198206,
+          "label": "Zahran Al Janub",
+          "region_id": 198120
+        }
+      ]
+    },
+    {
+      "value": 198118,
+      "label": "Northern Borders",
+      "governorates": [
+        {
+          "value": 198178,
+          "label": "Al Asyah",
+          "region_id": 198118
+        },
+        {
+          "value": 198270,
+          "label": "Al Qurayyat",
+          "region_id": 198118
+        },
+        {
+          "value": 198234,
+          "label": "Al Uwayqilah",
+          "region_id": 198118
+        },
+        {
+          "value": 198231,
+          "label": "Arar",
+          "region_id": 198118
+        },
+        {
+          "value": 198223,
+          "label": "Baqa",
+          "region_id": 198118
+        },
+        {
+          "value": 198271,
+          "label": "Dawamat Al Jandal",
+          "region_id": 198118
+        },
+        {
+          "value": 198187,
+          "label": "Hafar Al Batin",
+          "region_id": 198118
+        },
+        {
+          "value": 198232,
+          "label": "Rafha",
+          "region_id": 198118
+        },
+        {
+          "value": 198269,
+          "label": "Sakaka",
+          "region_id": 198118
+        },
+        {
+          "value": 198272,
+          "label": "Tubarjal",
+          "region_id": 198118
+        },
+        {
+          "value": 198233,
+          "label": "Turayf",
+          "region_id": 198118
+        }
+      ]
+    },
+    {
+      "value": 198116,
+      "label": "Tabuk",
+      "governorates": [
+        {
+          "value": 198221,
+          "label": "Al Bad",
+          "region_id": 198116
+        },
+        {
+          "value": 198171,
+          "label": "Al Is",
+          "region_id": 198116
+        },
+        {
+          "value": 198270,
+          "label": "Al Qurayyat",
+          "region_id": 198116
+        },
+        {
+          "value": 198165,
+          "label": "Al Ula",
+          "region_id": 198116
+        },
+        {
+          "value": 198216,
+          "label": "Al Wajh",
+          "region_id": 198116
+        },
+        {
+          "value": 198226,
+          "label": "Ash Shamli",
+          "region_id": 198116
+        },
+        {
+          "value": 198271,
+          "label": "Dawamat Al Jandal",
+          "region_id": 198116
+        },
+        {
+          "value": 198217,
+          "label": "Duba",
+          "region_id": 198116
+        },
+        {
+          "value": 198220,
+          "label": "Haqil",
+          "region_id": 198116
+        },
+        {
+          "value": 198168,
+          "label": "Khaybar",
+          "region_id": 198116
+        },
+        {
+          "value": 198227,
+          "label": "Mawqaq",
+          "region_id": 198116
+        },
+        {
+          "value": 198215,
+          "label": "Tabuk",
+          "region_id": 198116
+        },
+        {
+          "value": 198218,
+          "label": "Tayma",
+          "region_id": 198116
+        },
+        {
+          "value": 198272,
+          "label": "Tubarjal",
+          "region_id": 198116
+        },
+        {
+          "value": 198219,
+          "label": "Umluj",
+          "region_id": 198116
+        },
+        {
+          "value": 198164,
+          "label": "Yanbu",
+          "region_id": 198116
+        }
+      ]
+    }
+  ]
+}
