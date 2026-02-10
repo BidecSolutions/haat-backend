@@ -1076,8 +1076,8 @@ class ListingController extends Controller
 
             $isMarketplaceListing = in_array($listingType, [
                 'marketplace',
-                'property',
-                'motors',
+                // 'property',
+                // 'motors',
             ]);
 
 
@@ -1665,7 +1665,7 @@ class ListingController extends Controller
                     ];
                 });
 
-            
+
             if (! $onlyListings) {
 
                 // ============================
