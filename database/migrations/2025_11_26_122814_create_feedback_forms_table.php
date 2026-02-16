@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('feedback_forms', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->default('Ma3rood Feedback Form');
+            $table->string('title')->default('Haat Feedback Form');
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -36,7 +36,7 @@ class AuctionSoldNotification extends Notification
             ->first();
 
         return (new MailMessage)
-            ->subject('Your Listing Has Been Sold! - Ma3rood')
+            ->subject('Your Listing Has Been Sold! - Haat')
             ->view('emails.notifications.auction-sold', [
                 'notifiable' => $notifiable,
                 'listing' => $this->listing,

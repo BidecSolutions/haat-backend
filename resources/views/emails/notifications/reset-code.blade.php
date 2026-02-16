@@ -5,7 +5,7 @@
         <div class="greeting">Hello {{ optional($user)->name ?? "Sir" }},</div>
 
         <div class="message">
-            <p>You requested to reset your password on the Ma3rood App.</p>
+            <p>You requested to reset your password on the Haat App.</p>
 
             <p>Here is your 6-digit code:</p>
 

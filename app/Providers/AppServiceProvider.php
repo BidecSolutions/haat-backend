@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Date::use(Carbon::class);
         // Customize mail components to use our own styling
-        Mail::alwaysFrom(env('MAIL_FROM_ADDRESS', 'noreply@ma3rood.com'), env('MAIL_FROM_NAME', 'Ma3rood'));
-        
+        Mail::alwaysFrom(env('MAIL_FROM_ADDRESS', 'noreply@Haat.com'), env('MAIL_FROM_NAME', 'Haat'));
+
         // Override default mail components
         $this->publishes([
-            __DIR__.'/../../resources/views/vendor/mail' => resource_path('views/vendor/mail'),
+            __DIR__ . '/../../resources/views/vendor/mail' => resource_path('views/vendor/mail'),
         ], 'laravel-mail');
     }
 }

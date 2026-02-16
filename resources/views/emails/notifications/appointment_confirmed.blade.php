@@ -34,5 +34,5 @@
         </a>
     </div>
 
-    <p class="message">Thank you for using Ma3rood!</p>
+    <p class="message">Thank you for using Haat!</p>
 @endsection

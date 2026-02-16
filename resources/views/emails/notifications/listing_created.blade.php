@@ -4,7 +4,7 @@
     <div class="greeting">Hello {{ $user->name ?? 'User' }},</div>
 
     <div class="message">
-        <p>🎉 Your new listing has been <strong>created successfully</strong> on <strong>Ma3rood</strong>!</p>
+        <p>🎉 Your new listing has been <strong>created successfully</strong> on <strong>Haat</strong>!</p>
         <p>Here are the details of your listing:</p>
     </div>
 
@@ -30,7 +30,7 @@
         @if($listing->buy_now_price)
         <tr>
             <td style="padding: 10px; border: 1px solid #e9ecef; font-weight: bold;">Buy Now Price</td>
-            <td style="padding: 10px; border: 1px solid #e9ecef;"><img src="http://ma3rood.datainovate.com/backend/public/images/RialSignn.png" 
+            <td style="padding: 10px; border: 1px solid #e9ecef;"><img src="http://Haat.datainovate.com/backend/public/images/RialSignn.png" 
             alt="SAR" 
             width="14" 
             height="14" 
@@ -71,6 +71,6 @@
         <a href="{{ $motorsurl }}" class="button">View Listing</a>
     @endif
     <div class="message">
-        <p>Thank you for choosing <strong>Ma3rood</strong> — we’re excited to help your listing reach potential buyers!</p>
+        <p>Thank you for choosing <strong>Haat</strong> — we’re excited to help your listing reach potential buyers!</p>
     </div>
 @endsection

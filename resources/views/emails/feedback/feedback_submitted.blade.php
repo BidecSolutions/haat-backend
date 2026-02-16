@@ -4,7 +4,7 @@
     <div class="greeting">Hello Admin,</div>
     
     <div class="message">
-        A new feedback has been submitted on Ma3rood by 
+        A new feedback has been submitted on Haat by 
         <strong>{{ $feedback->user->name ?? 'Guest' }}</strong> ({{ $feedback->user->email ?? 'No email' }}).
     </div>
 

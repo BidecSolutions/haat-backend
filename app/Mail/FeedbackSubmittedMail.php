@@ -13,7 +13,7 @@ class FeedbackSubmittedMail extends Mailable
 
     public $feedback; // FeedbackResponse instance
 
-    public $subject = "New Feedback Submitted on Ma3rood";
+    public $subject = "New Feedback Submitted on Haat";
 
     /**
      * Create a new message instance.
@@ -33,7 +33,7 @@ class FeedbackSubmittedMail extends Mailable
     public function build()
     {
         return $this->to(env('ADMIN_EMAIL'))
-                    ->subject($this->subject)
-                    ->view('emails.feedback.feedback_submitted');
+            ->subject($this->subject)
+            ->view('emails.feedback.feedback_submitted');
     }
 }

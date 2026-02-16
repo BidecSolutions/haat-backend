@@ -36,9 +36,9 @@ class ListingEndingSoonNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $timeLeft = now()->diffForHumans($this->listing->end_date, true);
-        
+
         return (new MailMessage)
-            ->subject('Auction Ending Soon! - Ma3rood')
+            ->subject('Auction Ending Soon! - Haat')
             ->view('emails.notifications.listing-ending-soon', [
                 'notifiable' => $notifiable,
                 'listing' => $this->listing,
@@ -69,7 +69,7 @@ class ListingEndingSoonNotification extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         $timeLeft = now()->diffForHumans($this->listing->end_date, true);
-        
+
         return [
             'title' => 'Auction Ending Soon',
             'message' => "The auction for '{$this->listing->title}' is ending in {$timeLeft}!",

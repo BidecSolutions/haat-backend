@@ -38,7 +38,7 @@ class ManualBidApprovalRequiredNotification extends Notification implements Shou
         $url = url('/seller/listings/' . $this->listing->id . '/review-bid');
 
         return (new MailMessage)
-            ->subject('Manual Approval Required for Bid - Ma3rood')
+            ->subject('Manual Approval Required for Bid - Haat')
             ->view('emails.notifications.manual-bid-approval', [
                 'notifiable' => $notifiable,
                 'listing' => $this->listing,

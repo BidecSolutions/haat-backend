@@ -26,7 +26,7 @@ class AuctionWonNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Congratulations! You Won the Auction - Ma3rood')
+            ->subject('Congratulations! You Won the Auction - Haat')
             ->view('emails.notifications.auction-won', [
                 'notifiable' => $notifiable,
                 'listing' => $this->listing,

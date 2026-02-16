@@ -4,7 +4,7 @@
     <div class="greeting">Hello {{ $user->name }},</div>
     
     <div class="message">
-        <p>🎉 Welcome to <strong>Ma3rood</strong>! We're excited to have you join our marketplace community.</p>
+        <p>🎉 Welcome to <strong>Haat</strong>! We're excited to have you join our marketplace community.</p>
 
         <p>Here’s what you can do with your new account:</p>
 
@@ -26,6 +26,6 @@
 
         <p>Happy bidding!</p>
 
-        <p>Best regards,<br>The Ma3rood Team</p>
+        <p>Best regards,<br>The Haat Team</p>
     </div>
 @endsection

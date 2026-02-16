@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $subject ?? 'Ma3rood Notification' }}</title>
+    <title>{{ $subject ?? 'Haat Notification' }}</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -97,7 +97,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <div class="logo"><img height="50" width="50" src="http://ma3rood.datainovate.com/backend/public/images/icon.png" alt=""></div>
+            <div class="logo"><img height="50" width="50" src="http://Haat.datainovate.com/backend/public/images/icon.png" alt=""></div>
             <div class="tagline">Find Everything You Need in One Place</div>
         </div>
         
@@ -113,7 +113,7 @@
                 <a href="{{ config('app.frontend_url') }}/help">Help</a>
             </div>
             <div class="copyright">
-                &copy; {{ date('Y') }} Ma3rood. All rights reserved.<br>
+                &copy; {{ date('Y') }} Haat. All rights reserved.<br>
                 This email was sent to {{ $notifiable->email ?? 'you' }}
             </div>
         </div>

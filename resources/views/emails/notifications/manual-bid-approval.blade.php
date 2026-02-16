@@ -17,9 +17,9 @@
     <a href="{{ $url }}" class="button">Review the Bid</a>
     
     <div class="message">
-        <p>Thank you for using Ma3rood!</p>
+        <p>Thank you for using Haat!</p>
         
-        <p>Best regards,<br>The Ma3rood Team</p>
+        <p>Best regards,<br>The Haat Team</p>
     </div>
 @endsection
 

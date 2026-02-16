@@ -35,7 +35,7 @@ class AppResetCodeMail extends Mailable
     }
 
     public function build(){
-        return $this->subject('Your Ma3rood Password Reset Code')
+        return $this->subject('Your Haat Password Reset Code')
         ->view('emails.notifications.reset-code')
         ->with([
             'user' => $this->user,

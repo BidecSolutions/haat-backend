@@ -6,7 +6,7 @@
         <div class="greeting">Hello {{ $user->name ?? 'User' }},</div>
         
         <div class="message">
-            <p>We received a request to restore your Ma3rood account. Please use the code below to complete the process.</p>
+            <p>We received a request to restore your Haat account. Please use the code below to complete the process.</p>
             <p>Your account restoration code is:</p>
             <h2 style="margin: 20px 0; color: #667eea;">{{ $code }}</h2>
             <p>This code will expire in 30 minutes.</p>

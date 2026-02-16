@@ -44,8 +44,8 @@ class ListingBoughtNotification extends Notification
             ->first();
 
         $subject = $this->role === 'buyer'
-            ? 'Listing Purchased - Ma3rood'
-            : 'Your Listing Was Sold - Ma3rood';
+            ? 'Listing Purchased - Haat'
+            : 'Your Listing Was Sold - Haat';
 
         return (new MailMessage)
             ->subject($subject)

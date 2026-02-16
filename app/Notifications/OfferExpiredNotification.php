@@ -27,7 +27,7 @@ class OfferExpiredNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Offer Has Expired - Ma3rood')
+            ->subject('Your Offer Has Expired - Haat')
             ->view('emails.notifications.offer-expired', [
                 'notifiable' => $notifiable,
                 'offer' => $this->offer,

@@ -4,7 +4,7 @@
     <div class="greeting">Hello {{ $notifiable->name }},</div>
     
     <div class="message">
-        <p>You are receiving this email because we received a password reset request for your Ma3rood account.</p>
+        <p>You are receiving this email because we received a password reset request for your Haat account.</p>
         
         <p>Click the button below to reset your password:</p>
     </div>
@@ -17,6 +17,6 @@
         
         <p>If you did not request a password reset, no further action is required.</p>
         
-        <p>Best regards,<br>The Ma3rood Team</p>
+        <p>Best regards,<br>The Haat Team</p>
     </div>
 @endsection

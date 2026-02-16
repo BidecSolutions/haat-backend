@@ -22,7 +22,7 @@ class ResetPasswordNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Reset Your Password - Ma3rood')
+            ->subject('Reset Your Password - Haat')
             ->view('emails.notifications.reset-password', [
                 'notifiable' => $notifiable,
                 'token' => $this->token,

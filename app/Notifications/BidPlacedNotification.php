@@ -36,7 +36,7 @@ class BidPlacedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('New Bid Placed on Your Listing - Ma3rood')
+            ->subject('New Bid Placed on Your Listing - Haat')
             ->view('emails.notifications.bid-placed', [
                 'notifiable' => $notifiable,
                 'bid' => $this->bid,

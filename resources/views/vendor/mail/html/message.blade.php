@@ -6,7 +6,7 @@
     <meta name="x-app-color" content="#667eea">
     <meta name="theme-color" content="#667eea">
 
-    <title>{{ $subject ?? 'Ma3rood Notification' }}</title>
+    <title>{{ $subject ?? 'Haat Notification' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,7 +14,7 @@
 
     <!-- Styles -->
     <style>
-        /* Custom Ma3rood Email Styling */
+        /* Custom Haat Email Styling */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -96,7 +96,7 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <div class="logo">Ma3rood</div>
+            <div class="logo">Haat</div>
             <div class="tagline">Find Everything You Need in One Place</div>
         </div>
         
@@ -112,7 +112,7 @@
                 <a href="{{ config('app.frontend_url') }}/help">Help</a>
             </div>
             <div class="copyright">
-                &copy; {{ date('Y') }} Ma3rood. All rights reserved.<br>
+                &copy; {{ date('Y') }} Haat. All rights reserved.<br>
                 This email was sent to {{ $notifiable->email ?? 'you' }}
             </div>
         </div>
