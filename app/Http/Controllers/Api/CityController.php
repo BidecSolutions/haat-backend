@@ -15,14 +15,21 @@ class CityController extends Controller
     public function index(Request $request)
     {
         // Defaults
-        $limit = (int) $request->get('limit');
+        $limit = (int) $request->get('limit') ?: 500;
         $offset = (int) $request->get('offset');
         $search = $request->get('search');
         $regionId = $request->get('region_id');
+        $countryId = $request->get('country_id');
+        $regionIds = $countryId && !$regionId
+            ? \App\Models\Regions::where('country_id', $countryId)->pluck('id')->toArray()
+            : [];
 
         $query = City::with('region:id,name')
             ->when($regionId, function ($q) use ($regionId) {
                 $q->where('region_id', $regionId);
+            })
+            ->when(!empty($regionIds), function ($q) use ($regionIds) {
+                $q->whereIn('region_id', $regionIds);
             })
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'LIKE', '%' . $search . '%');
@@ -55,9 +62,14 @@ class CityController extends Controller
      */
     public function store(Request $request)
     {
-        $request->merge([
-            'governorate_id' => $request->governorate_id ?? 1
-        ]);
+        $regionId = $request->region_id;
+        $governorateId = $request->governorate_id;
+        if (!$governorateId && $regionId) {
+            $gov = \App\Models\Governorates::where('region_id', $regionId)->first();
+            $governorateId = $gov?->id ?? 1;
+        }
+        $request->merge(['governorate_id' => $governorateId ?? 1]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'region_id' => 'required|exists:regions,id',
@@ -94,9 +106,14 @@ class CityController extends Controller
      */
     public function update(Request $request, City $city)
     {
-        $request->merge([
-            'governorate_id' => $request->governorate_id ?? 1
-        ]);
+        $regionId = $request->region_id ?? $city->region_id;
+        $governorateId = $request->governorate_id;
+        if (!$governorateId && $regionId) {
+            $gov = \App\Models\Governorates::where('region_id', $regionId)->first();
+            $governorateId = $gov?->id ?? $city->governorate_id ?? 1;
+        }
+        $request->merge(['governorate_id' => $governorateId ?? $city->governorate_id ?? 1]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'region_id' => 'required|exists:regions,id',

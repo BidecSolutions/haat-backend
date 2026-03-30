@@ -19,22 +19,23 @@ class RegionController extends Controller
         $search = $request->get('search');
         $countryId = $request->get('country_id');
 
+        $limit = $limit > 0 ? $limit : 500;
+        $countryName = $request->get('country');
+        if ($countryName && !$countryId) {
+            $country = \App\Models\Country::where('name', 'like', $countryName)->first();
+            if ($country) {
+                $countryId = $country->id;
+            }
+        }
         $query = Regions::latest()
-        ->when($countryId, function($q) use ($countryId){
-            $q->where('country_id', $countryId);
-        })
-        ->when($search, function($q) use ($search){
-            $q->where('name', 'LIKE', '%'. $search . '%');
-        });
-        // Get total count (before limit/offset)
+            ->when($countryId, function ($q) use ($countryId) {
+                $q->where('country_id', $countryId);
+            })
+            ->when($search, function ($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
         $total = $query->count();
-
-        // Apply pagination
-        $regions = $query
-            ->latest()
-            ->limit($limit)
-            ->offset($offset)
-            ->get();
+        $regions = $query->with('country')->limit($limit)->offset($offset)->get();
         return response()->json([
             'status' => true,
             'message' => 'Regions retrieved successfully.',
@@ -48,8 +49,9 @@ class RegionController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:regions,name',
-            'code' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
+            'country_id' => 'required|exists:countries,id',
         ]);
 
         if ($validator->fails()) {
@@ -83,8 +85,9 @@ class RegionController extends Controller
     public function update(Request $request, Regions $region)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:regions,name,' . $region->id,
-            'code' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'name_ar' => 'nullable|string|max:255',
+            'country_id' => 'required|exists:countries,id',
         ]);
 
         if ($validator->fails()) {

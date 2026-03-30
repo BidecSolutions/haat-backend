@@ -11,6 +11,7 @@ class FeedbackQuestionOption extends Model
         'option_label',
         'option_value',
         'option_label_ar',
+        'option_label_bn',
         'emoji',
         'order',
     ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AppResetCodeMail;
+use App\Mail\VerificationMail;
 use App\Models\ListingView;
 use App\Models\SearchHistory;
 use App\Models\User;
@@ -68,12 +69,13 @@ class UserAuthController extends Controller
                 'account_type' => 'nullable|in:business,personal',
             ]);
 
-            if($data->fails()){
+            if ($data->fails()) {
                 return response()->json([
-                    "success"=> false,
-                    "message"=> "Registration Failed",
-                    "error" => $data->errors()->first(),
-                ]);
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'error' => $data->errors()->first(),
+                    'errors' => $data->errors()->toArray(),
+                ], 422);
             }
 
             $existingUser = User::where('email', $request->email)->first();
@@ -149,10 +151,28 @@ class UserAuthController extends Controller
                 ]);
             }
 
-            // ✅ Send new verification email
-            Mail::send('emails.verification', ['user' => $user, 'code' => $code], function ($message) use ($user) {
-                $message->to($user->email)->subject('Your Login Verification Code');
-            });
+            // ✅ Send OTP verification email (use VerificationMail Mailable for reliability)
+            \Log::info('OTP for ' . $user->email . ': ' . $code);
+            try {
+                Mail::to($user->email)->send(new VerificationMail($user, $code));
+            } catch (\Throwable $mailError) {
+                \Log::error('OTP email failed: ' . $mailError->getMessage(), [
+                    'email' => $user->email,
+                    'otp' => $code,
+                    'mailer' => config('mail.default'),
+                ]);
+                $payload = [
+                    'success' => true,
+                    'message' => $existingUser && $existingUser->status == 3
+                        ? 'Account restored. Check console/log for OTP.'
+                        : 'Successfully registered. Check console/log for OTP.',
+                    'email' => $user->email,
+                ];
+                if (app()->hasDebugModeEnabled()) {
+                    $payload['otp'] = $code;
+                }
+                return response()->json($payload, 200);
+            }
 
             // ✅ Attach guest data (if any)
             if ($request->header('X-Guest-ID')) {
@@ -163,18 +183,23 @@ class UserAuthController extends Controller
                     ->update(['user_id' => $user->id, 'guest_id' => null]);
             }
 
-            return response()->json([
+            $payload = [
                 'success' => true,
                 'message' => $existingUser && $existingUser->status == 3
                     ? 'Account restored and verification email sent.'
                     : 'Successfully registered.',
                 'email' => $user->email,
-            ], 200);
+            ];
+            if (app()->hasDebugModeEnabled()) {
+                $payload['otp'] = $code;
+            }
+            return response()->json($payload, 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Registration failed',
-                'error' => app()->hasDebugModeEnabled() ? $e->getMessage() : null,
+                'error' => $e->getMessage(),
+                'errors' => app()->hasDebugModeEnabled() ? ['_exception' => [$e->getMessage()]] : null,
             ], 500);
         }
     }
@@ -298,10 +323,15 @@ class UserAuthController extends Controller
             ])->save();
 
             // Send OTP email
-            Mail::send('emails.verification', ['user' => $user, 'code' => $code], function ($message) use ($user) {
-                $message->to($user->email)
-                    ->subject('Your Verification Code');
-            });
+            try {
+                Mail::to($user->email)->send(new VerificationMail($user, $code));
+            } catch (\Throwable $mailError) {
+                \Log::error('Resend OTP email failed: ' . $mailError->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Could not send verification email. Please check mail configuration.',
+                ], 500);
+            }
 
             return response()->json([
                 'success' => true,
@@ -957,10 +987,11 @@ class UserAuthController extends Controller
                 ])->save();
 
                 // Send OTP email
-                Mail::send('emails.verification', ['user' => $user, 'code' => $code], function ($message) use ($user) {
-                    $message->to($user->email)
-                        ->subject('Your Verification Code');
-                });
+                try {
+                    Mail::to($user->email)->send(new VerificationMail($user, (string) $code));
+                } catch (\Throwable $e) {
+                    \Log::error('Login OTP email failed: ' . $e->getMessage());
+                }
 
                 return response()->json([
                     'success' => false,
@@ -983,10 +1014,11 @@ class UserAuthController extends Controller
                 ])->save();
 
                 // Send OTP email
-                Mail::send('emails.verification', ['user' => $user, 'code' => $code], function ($message) use ($user) {
-                    $message->to($user->email)
-                        ->subject('Your Verification Code');
-                });
+                try {
+                    Mail::to($user->email)->send(new VerificationMail($user, (string) $code));
+                } catch (\Throwable $e) {
+                    \Log::error('Login OTP email failed: ' . $e->getMessage());
+                }
 
                 return response()->json([
                     'success' => false,

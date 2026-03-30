@@ -7,6 +7,7 @@ use App\Models\FeedbackAnswer;
 use App\Models\FeedbackForm;
 use App\Models\FeedbackResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -136,7 +137,12 @@ class FeedbackResponseController extends Controller
         }
         $response = FeedbackResponse::with(['answers.question', 'answers.option', 'user'])
             ->find($response->id);
-        Mail::send(new FeedbackSubmittedMail($response));
+
+        try {
+            Mail::send(new FeedbackSubmittedMail($response));
+        } catch (\Throwable $e) {
+            Log::warning('Feedback email failed to send: ' . $e->getMessage());
+        }
 
         return response()->json([
             'status' => true,

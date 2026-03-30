@@ -32,7 +32,9 @@ class FeedbackSubmittedMail extends Mailable
      */
     public function build()
     {
-        return $this->to(env('ADMIN_EMAIL'))
+        $adminEmail = config('mail.admin_email') ?: config('mail.from.address', 'hello@example.com');
+
+        return $this->to($adminEmail)
             ->subject($this->subject)
             ->view('emails.feedback.feedback_submitted');
     }

@@ -13,14 +13,17 @@ use App\Http\Controllers\Api\{
     ListingReportController,
     WatchlistController,
     AdminAnalyticsController,
+    ChatbotController,
     CityController,
     CountryController,
     EmailTestController,
     CodeController,
     ContactMessageController,
+    DashboardController,
     GovernorateController,
     InstructionController,
     ListingAttributeController,
+    ModuleController,
     PromotionController,
     RegionController,
 };
@@ -164,13 +167,14 @@ Route::middleware('auth:admin-api')->prefix('admin')->group(function () {
         Route::get('/', 'index');
         Route::get('/views', 'views');
         Route::get('/{slug}/show', 'show');
-        // Route::post('/{slug}/update', 'update');
+        Route::post('/store', 'adminStore');
+        Route::post('/{slug}/update', 'adminUpdate');
         Route::delete('/{slug}/destroy', 'destroy');
         Route::put('/{slug}/approve', 'approve');
         Route::put('/{slug}/reject', 'reject');
         Route::get('/type/{type}', 'indexByType');
         Route::patch('/{slug}/toggle', 'toggleStatus');
-        
+        Route::patch('/{slug}/toggle-featured', 'toggleFeatured');
     });
 
     Route::prefix('listings')->controller(BidController::class)->group(function () {
@@ -217,6 +221,29 @@ Route::middleware('auth:admin-api')->prefix('admin')->group(function () {
         Route::get('/{id}/show', 'show');
         Route::post('/{id}/update', 'update');
         Route::delete('/{id}/delete', 'destroy');
+    });
+
+    // Module Management Routes
+    Route::prefix('modules')->controller(ModuleController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/store', 'store');
+        Route::get('/{id}/show', 'show');
+        Route::post('/{id}/update', 'update');
+        Route::patch('/{id}/toggle', 'toggleStatus');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Chatbot FAQ Management
+    Route::prefix('chatbot')->controller(ChatbotController::class)->group(function () {
+        Route::get('/', 'adminIndex');
+        Route::post('/store', 'store');
+        Route::post('/{id}/update', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    // Dashboard Stats
+    Route::prefix('dashboard')->controller(DashboardController::class)->group(function () {
+        Route::get('/stats', 'stats');
     });
 });
 

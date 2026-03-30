@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\BlogsController;
+use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\DeepLinkingController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -95,3 +97,9 @@ Route::get('/allusers', [UserController::class, 'allUsers']);
 Route::get('/allSellers', [UserController::class, 'allSellers']);
 Route::get('/allBuyers', [UserController::class, 'allBuyers']);
 Route::get('/allBidders', [UserController::class, 'allBidders']);
+
+// Public active modules endpoint
+Route::get('/modules/active', [ModuleController::class, 'active']);
+
+// Public chatbot FAQs (for website chatbot)
+Route::get('/chatbot/faqs', [ChatbotController::class, 'index']);

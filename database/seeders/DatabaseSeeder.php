@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
                 PaymentMethodSeeder::class,
                 ShippingMethodSeeder::class,
                 FeedbackSeeder::class,
+                ChatbotFaqSeeder::class,
+                BangladeshSeeder::class, // Bangladesh regions & cities for registration
             ]);
     }
 }

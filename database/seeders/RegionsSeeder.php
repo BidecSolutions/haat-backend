@@ -17,11 +17,21 @@ class RegionsSeeder extends Seeder
     public function run(): void
     {
         //
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = OFF;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
         Regions::truncate();
         Governorates::truncate();
         Country::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = ON;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
         $country = Country::create(['name' => 'Saudi Arabia']);
 
@@ -34,6 +44,7 @@ class RegionsSeeder extends Seeder
             $regionsModel = Regions::create([
                 'country_id' => $country->id,
                 'name' => $regions['label'],
+                'name_ar' => $regions['label_ar'] ?? $regions['label'],
             ]);
             if (isset($regions['governorates']) && is_array($regions['governorates'])) {
                 foreach ($regions['governorates'] as $governorates) {
@@ -41,6 +52,7 @@ class RegionsSeeder extends Seeder
                     $governorates = Governorates::create([
                         'region_id' => $regionsModel->id,
                         'name' => $governorates['label'],
+                        'name_ar' => $governorates['label_ar'] ?? $governorates['label'],
                     ]);
                 }
             }

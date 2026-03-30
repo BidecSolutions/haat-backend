@@ -311,6 +311,17 @@ class Listing extends Model
     }
 
     /* -----------------------------------------------------------------
+     | Scopes
+     |-----------------------------------------------------------------*/
+
+    public function scopeByType($query, $type)
+    {
+        $categoryIds = Category::where('category_type', $type)->pluck('id');
+
+        return $query->whereIn('category_id', $categoryIds);
+    }
+
+    /* -----------------------------------------------------------------
      | Model Events
      |-----------------------------------------------------------------*/
 

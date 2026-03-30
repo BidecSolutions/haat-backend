@@ -339,7 +339,17 @@ class ListingController extends Controller
     {
         $feedback = false;
         try {
-            $query = Listing::with(['category', 'creator', 'images', 'bids.user', 'winningBid.user', 'buyNowPurchases.buyer', 'attributes', 'paymentMethod:id,name', 'shippingMethod:id,name']); // removed WHERE('is_active, '1') from here added down in status logic for sold listings
+            $listingType = $request->get('listing_type');
+            $isServices = strtolower($listingType ?? '') === 'services';
+
+            $baseWith = ['category', 'creator', 'images', 'attributes'];
+            if ($isServices) {
+                $query = Listing::with(array_merge($baseWith, ['regions', 'cities', 'area', 'governorates']))
+                    ->withCount('views');
+            } else {
+                $query = Listing::with(array_merge($baseWith, ['bids.user', 'winningBid.user', 'buyNowPurchases.buyer', 'paymentMethod:id,name', 'shippingMethod:id,name']))
+                    ->withCount('views', 'bids');
+            }
             // $query = Listing::query();
             // return $query->get();
 
@@ -451,13 +461,29 @@ class ListingController extends Controller
                 $query->where('reserve_price', $request->reserve_price);
             }
             if ($request->has('start_price')) {
-                $query->where('start_price', $request->start_price)->whereNull('reserve_price')->where('listing_type', '!=', 'property');
+                $query->where('start_price', $request->start_price)
+                    ->whereNull('reserve_price')
+                    ->where('listing_type', '!=', 'property')
+                    ->where(function ($q) {
+                        $q->whereNull('expire_at')
+                            ->orWhere('expire_at', '>', now());
+                    });
             }
 
             // Filter by category and its children
             if ($request->filled('category_id')) {
                 $categoryIds = $this->getAllCategoryIds($request->category_id);
                 $query->whereIn('category_id', $categoryIds);
+            }
+
+            if ($request->filled('region_id')) {
+                $query->where('regions_id', $request->region_id);
+            }
+            if ($request->filled('city_id')) {
+                $query->where('city_id', $request->city_id);
+            }
+            if ($request->filled('area_id')) {
+                $query->where('area_id', $request->area_id);
             }
 
             if ($request->filled('condition')) {
@@ -472,23 +498,35 @@ class ListingController extends Controller
                 $query->where('start_price', '<=', $request->price_to);
             }
 
-            $listings = $query->latest()->paginate(20);
+            $perPage = (int) ($request->get('per_page') ?: $request->get('page_size') ?: 20);
+            $perPage = min(max($perPage, 1), 100);
+            $listings = $query->orderBy('is_featured', 'desc')->latest()->paginate($perPage);
             // $listings = $query->latest()->get();
-            $listings->getCollection()->transform(function ($listing) use ($authUserId) {
-
-                $listing->setAttribute('bids_count', $listing->bids()->count());
-                $listing->setAttribute('view_count', $listing->views()->count());
-
+            $listings->getCollection()->transform(function ($listing) use ($authUserId, $isServices) {
+                $listing->setAttribute('view_count', $listing->views_count ?? 0);
                 $listing->start_price = number_format((int) ($listing->start_price ?? 0));
                 $listing->reserve_price = number_format((int) ($listing->reserve_price ?? 0));
                 $listing->buy_now_price = number_format((int) ($listing->buy_now_price ?? 0));
 
-                // highest bid
-                $highestBid = $listing->bids()->orderByDesc('amount')->first();
+                if ($isServices) {
+                    $listing->setAttribute('bids_count', 0);
+                    $listing->highest_bid_amount = null;
+                    $listing->highest_bid_id = null;
+                    $listing->highest_bidder_name = null;
+                    $listing->highest_bid_type = null;
+                    $listing->buying_offers = collect();
+                    $listing->selling_offers = collect();
+                    return $listing;
+                }
+
+                $listing->setAttribute('bids_count', $listing->bids_count ?? $listing->bids()->count());
+                $highestBid = $listing->relationLoaded('bids')
+                    ? $listing->bids->sortByDesc('amount')->first()
+                    : $listing->bids()->orderByDesc('amount')->first();
                 if ($highestBid) {
                     $listing->highest_bid_amount = $highestBid->amount;
                     $listing->highest_bid_id = $highestBid->id;
-                    $listing->highest_bidder_name = $highestBid->user->name ?? $highestBid->user->username;
+                    $listing->highest_bidder_name = $highestBid->user->name ?? $highestBid->user->username ?? null;
                     $listing->highest_bid_type = $highestBid->type;
                 } else {
                     $listing->highest_bid_amount = null;
@@ -497,24 +535,16 @@ class ListingController extends Controller
                     $listing->highest_bid_type = null;
                 }
 
-                // 💼 Offers made by user
                 $listing->buying_offers = $authUserId
-                    ? ListingOffer::with(['user'])->where('listing_id', $listing->id)
-                    ->where('user_id', $authUserId)
-                    ->get()
+                    ? ListingOffer::with(['user'])->where('listing_id', $listing->id)->where('user_id', $authUserId)->get()
                     : collect();
-
-                // 🧾 Offers received by the user (as seller)
                 $listing->selling_offers = $authUserId && $listing->created_by == $authUserId
-                    ? ListingOffer::with(['user'])->where('listing_id', $listing->id)
-                    ->get()
+                    ? ListingOffer::with(['user'])->where('listing_id', $listing->id)->get()
                     : collect();
 
-                // ⛔ If listing is not sold (status != 3), hide winningBid
                 if ($listing->status != 3) {
                     $listing->setRelation('winningBid', null);
                 }
-
                 return $listing;
             });
             $listingData = $listings->items();
@@ -1051,9 +1081,13 @@ class ListingController extends Controller
                 'sort_by' => 'nullable|string|in:start_price_lowest,start_price_highest,buy_now_lowest,buy_now_highest,most_bids,latest,closing_soon',
 
                 // Filter parameters
-                'condition' => 'nullable|string|in:new,used,refurbished',
+                'condition' => 'nullable|string',
                 'min_price' => 'nullable|numeric|min:0',
                 'max_price' => 'nullable|numeric|min:0',
+                'region_id' => 'nullable|integer|exists:regions,id',
+                'city_id' => 'nullable|integer|exists:cities,id',
+                'area_id' => 'nullable|integer|exists:areas,id',
+                'category_id' => 'nullable|integer|exists:categories,id',
                 'allow_offers' => 'nullable|boolean',
                 'has_shipping' => 'nullable|boolean',
                 'is_featured' => 'nullable|boolean',
@@ -1371,7 +1405,18 @@ class ListingController extends Controller
             $query->where('is_featured', (bool) $request->is_featured);
         }
 
-        // Location filter
+        // Location filter (region_id, city_id, area_id)
+        if ($request->filled('region_id')) {
+            $query->where('regions_id', $request->region_id);
+        }
+        if ($request->filled('city_id')) {
+            $query->where('city_id', $request->city_id);
+        }
+        if ($request->filled('area_id')) {
+            $query->where('area_id', $request->area_id);
+        }
+
+        // Location filter (legacy text search)
         if ($request->filled('location')) {
             $location = strtolower($request->location);
             $query->where(function ($q) use ($location) {
@@ -1900,7 +1945,7 @@ class ListingController extends Controller
     public function indexByType($type)
     {
         try {
-            $listings = Listing::with(['user', 'category'])->where('is_active', 1)->byType($type)->get();
+            $listings = Listing::with(['user', 'category'])->where('is_active', 1)->byType($type)->orderBy('is_featured', 'desc')->latest()->get();
 
             return response()->json(['status' => true, 'data' => $listings]);
         } catch (Exception $e) {
@@ -1972,10 +2017,15 @@ class ListingController extends Controller
                 'address' => 'nullable|string|max:255',
                 'meta_description' => 'nullable|string',
                 'expire_at' => 'nullable|date|after:now',
-                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
                 'attributes' => 'array',
                 'attributes.*.key' => 'required|string',
                 'attributes.*.value' => 'nullable|string',
+                'is_featured' => 'nullable|boolean',
+            ], [
+                'images.*.max' => 'Each image must be under 5MB. Try compressing your images.',
+                'images.*.mimes' => 'Images must be JPEG, PNG, JPG, GIF, SVG or WebP.',
+                'images.*.uploaded' => 'Image upload failed. File may be too large (max 5MB) or corrupted. Try a smaller image.',
             ]);
 
             if ($validator->fails()) {
@@ -2000,6 +2050,13 @@ class ListingController extends Controller
             $data['status'] = 1;
             $data['is_active'] = 1;
             $data['created_by'] = auth('api')->id(); // or auth('admin-api')->id()
+            // Map region_id -> regions_id for job form
+            if ($request->has('region_id') && ! $request->has('regions_id')) {
+                $data['regions_id'] = $request->region_id;
+            }
+            if ($request->has('is_featured')) {
+                $data['is_featured'] = $request->boolean('is_featured');
+            }
             $creator = User::where('id', $data['created_by'])->first();
             if (! $creator) {
                 return response()->json([
@@ -2029,27 +2086,61 @@ class ListingController extends Controller
                 }
             }
 
+            // Job-specific fields (stored as attributes)
+            $jobFields = [
+                'company_name', 'work_type', 'minimum_pay_type', 'minimum_pay_amount', 'show_pay',
+                'contact_name', 'contact_phone', 'contact_email',
+                'is_entry_level', 'short_summary', 'company_benefits', 'deadline', 'video_link',
+            ];
+            foreach ($jobFields as $key) {
+                $val = $request->input($key);
+                if ($val !== null && $val !== '') {
+                    $listing->attributes()->create(['key' => $key, 'value' => (string) $val]);
+                }
+            }
+            if ($request->has('key_points') && is_array($request->key_points)) {
+                $listing->attributes()->create(['key' => 'key_points', 'value' => json_encode($request->key_points)]);
+            } elseif ($request->has('key_points') && is_string($request->key_points)) {
+                $listing->attributes()->create(['key' => 'key_points', 'value' => $request->key_points]);
+            }
+
             // 📁 Ensure directory exists
             $directory = 'listings/images';
             if (! Storage::disk('public')->exists($directory)) {
                 Storage::disk('public')->makeDirectory($directory, 0775, true);
             }
 
-            // 🖼 Upload images (max 20)
+            // 🖼 Job-specific: logo & banner (stored as attributes)
+            if ($request->hasFile('logo')) {
+                $logoPath = $request->file('logo')->store($directory, 'public');
+                $listing->attributes()->create(['key' => 'logo', 'value' => $logoPath]);
+            }
+            if ($request->hasFile('banner')) {
+                $bannerPath = $request->file('banner')->store($directory, 'public');
+                $listing->attributes()->create(['key' => 'banner', 'value' => $bannerPath]);
+            }
+
+            // 🖼 Upload images: support images[], images[0], and media (job form)
+            $imageFiles = collect();
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $index => $image) {
-                    if ($index >= 20) {
-                        break;
-                    }
+                $files = $request->file('images');
+                $imageFiles = is_array($files) ? collect($files) : collect([$files]);
+            } elseif ($request->hasFile('media')) {
+                $files = $request->file('media');
+                $imageFiles = is_array($files) ? collect($files) : collect([$files]);
+            }
 
+            $order = 0;
+            foreach ($imageFiles as $image) {
+                if ($image && $order < 20) {
                     $path = $image->store($directory, 'public');
-
                     ListingImage::create([
                         'listing_id' => $listing->id,
                         'image_path' => $path,
-                        'alt_text' => $request->input("alt_text.$index", null),
-                        'order' => $index,
+                        'alt_text' => $request->input("alt_text.{$order}", null),
+                        'order' => $order,
                     ]);
+                    $order++;
                 }
             }
 
@@ -2107,6 +2198,10 @@ class ListingController extends Controller
                 'category',
                 'creator',
                 'images',
+                'regions',
+                'cities',
+                'area',
+                'governorates',
                 'bids.user',
                 'attributes',
                 'comments.user:id,username,profile_photo',
@@ -2168,6 +2263,17 @@ class ListingController extends Controller
             $attributes = collect($listing->attributes)->pluck('value', 'key')->toArray();
             $listingData = array_merge($listing->toArray(), $attributes);
             unset($listingData['attributes']);
+
+            // ✅ Append full image URLs for frontend (Storage::url returns /storage/path)
+            if (! empty($listingData['images']) && is_array($listingData['images'])) {
+                $listingData['images'] = array_map(function ($img) {
+                    $path = $img['image_path'] ?? $img['path'] ?? null;
+                    if ($path) {
+                        $img['url'] = asset('storage/' . ltrim($path, '/'));
+                    }
+                    return $img;
+                }, $listingData['images']);
+            }
 
             // ✅ Dealer's other listings
             $dealersListing = Listing::with('images:id,listing_id,image_path')
@@ -2262,14 +2368,7 @@ class ListingController extends Controller
                 //     'data' => $listing,
                 // ]);
             }
-            $bidCheck = Bid::where('listing_id', $listing->id)->first();
-            if ($bidCheck) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'you cannot update this listing becasue the bidding is started on this product',
-                    'data' => [],
-                ]);
-            }
+            $hasBids = Bid::where('listing_id', $listing->id)->exists();
 
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
@@ -2302,12 +2401,17 @@ class ListingController extends Controller
                 'category_id' => 'required|exists:categories,id',
                 'meta_title' => 'nullable|string|max:255',
                 'meta_description' => 'nullable|string',
-                'expire_at' => 'nullable|date|after:now',
-                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'expire_at' => 'nullable|date',
+                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
                 'attributes' => 'array',
                 'attributes.*.key' => 'required|string',
                 'attributes.*.value' => 'nullable|string',
+                'is_featured' => 'nullable|boolean',
 
+            ], [
+                'images.*.max' => 'Each image must be under 5MB. Try compressing your images.',
+                'images.*.mimes' => 'Images must be JPEG, PNG, JPG, GIF, SVG or WebP.',
+                'images.*.uploaded' => 'Image upload failed. File may be too large (max 5MB) or corrupted. Try a smaller image.',
             ]);
 
             if ($validator->fails()) {
@@ -2319,7 +2423,18 @@ class ListingController extends Controller
             }
 
             $data = $validator->validated();
+            if ($request->has('is_featured')) {
+                $data['is_featured'] = $request->boolean('is_featured');
+            }
             Log::info('Validated data:', $data);
+
+            // When bids exist, do not allow price/expiry changes (auction integrity)
+            if ($hasBids) {
+                $data = collect($data)->except([
+                    'start_price', 'reserve_price', 'buy_now_price', 'expire_at',
+                ])->toArray();
+            }
+
             $listing->update($data);
 
             //  Sync attributes
@@ -2330,28 +2445,59 @@ class ListingController extends Controller
                 }
             }
 
-            // ✅ Only process images if provided
-            if ($request->hasFile('images')) {
-                $directory = 'listings/images';
-                if (! Storage::disk('public')->exists($directory)) {
-                    Storage::disk('public')->makeDirectory($directory, 0775, true);
+            // Job-specific fields (stored as attributes) - same as store
+            $jobFields = [
+                'company_name', 'work_type', 'minimum_pay_type', 'minimum_pay_amount', 'show_pay',
+                'contact_name', 'contact_phone', 'contact_email',
+                'is_entry_level', 'short_summary', 'company_benefits', 'deadline', 'video_link',
+            ];
+            foreach ($jobFields as $key) {
+                if ($request->has($key) && $request->input($key) !== null && $request->input($key) !== '') {
+                    $listing->attributes()->where('key', $key)->delete();
+                    $listing->attributes()->create(['key' => $key, 'value' => $request->input($key)]);
                 }
+            }
+            if ($request->has('key_points') && is_array($request->key_points)) {
+                $listing->attributes()->where('key', 'key_points')->delete();
+                $listing->attributes()->create(['key' => 'key_points', 'value' => json_encode($request->key_points)]);
+            } elseif ($request->has('key_points') && is_string($request->key_points) && $request->key_points !== '') {
+                $listing->attributes()->where('key', 'key_points')->delete();
+                $listing->attributes()->create(['key' => 'key_points', 'value' => $request->key_points]);
+            }
 
+            $directory = 'listings/images';
+            if (! Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->makeDirectory($directory, 0775, true);
+            }
+
+            // Job-specific: logo & banner
+            if ($request->hasFile('logo')) {
+                $listing->attributes()->where('key', 'logo')->delete();
+                $logoPath = $request->file('logo')->store($directory, 'public');
+                $listing->attributes()->create(['key' => 'logo', 'value' => $logoPath]);
+            }
+            if ($request->hasFile('banner')) {
+                $listing->attributes()->where('key', 'banner')->delete();
+                $bannerPath = $request->file('banner')->store($directory, 'public');
+                $listing->attributes()->create(['key' => 'banner', 'value' => $bannerPath]);
+            }
+
+            // ✅ Process images if provided
+            if ($request->hasFile('images')) {
                 $existingCount = $listing->images->count();
+                $imageFiles = $request->file('images');
+                $imageFiles = is_array($imageFiles) ? $imageFiles : [$imageFiles];
 
-                foreach ($request->file('images') as $index => $image) {
-                    if (($existingCount + $index) >= 20) {
-                        break;
+                foreach ($imageFiles as $index => $image) {
+                    if ($image && ($existingCount + $index) < 20) {
+                        $path = $image->store($directory, 'public');
+                        ListingImage::create([
+                            'listing_id' => $listing->id,
+                            'image_path' => $path,
+                            'alt_text' => $request->input("alt_text.{$index}", null),
+                            'order' => $existingCount + $index,
+                        ]);
                     }
-
-                    $path = $image->store($directory, 'public');
-
-                    ListingImage::create([
-                        'listing_id' => $listing->id,
-                        'image_path' => $path,
-                        'alt_text' => $request->input("alt_text.$index", null),
-                        'order' => $existingCount + $index,
-                    ]);
                 }
             }
 
@@ -2478,6 +2624,55 @@ class ListingController extends Controller
             }
 
             // Delete associated images
+            foreach ($listing->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->delete();
+            }
+
+            $listing->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Listing deleted successfully',
+                'data' => null,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting listing',
+                'data' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get current user's job listings (alias for index with listing_type=jobs).
+     */
+    public function myJobs(Request $request)
+    {
+        $request->merge(['listing_type' => 'jobs']);
+
+        return $this->index($request);
+    }
+
+    /**
+     * Destroy listing by id or slug (for job-listing routes that may pass id).
+     */
+    public function destroyByIdOrSlug($idOrSlug)
+    {
+        try {
+            $query = Listing::where('created_by', auth('api')->id());
+            $query->where(is_numeric($idOrSlug) ? 'id' : 'slug', $idOrSlug);
+            $listing = $query->first();
+
+            if (! $listing) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Listing not found',
+                    'data' => null,
+                ], 404);
+            }
+
             foreach ($listing->images as $image) {
                 Storage::disk('public')->delete($image->image_path);
                 $image->delete();
@@ -2788,5 +2983,174 @@ class ListingController extends Controller
                 'bids_won' => $won_bids,
             ],
         ];
+    }
+
+    public function adminStore(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'listing_type' => 'required|string',
+                'category_id' => 'required|exists:categories,id',
+                'condition' => ['nullable', new Enum(ListingCondition::class)],
+                'start_price' => 'nullable|numeric|min:0',
+                'buy_now_price' => 'nullable|numeric|min:0',
+                'country_id' => 'nullable|exists:countries,id',
+                'regions_id' => 'nullable|exists:regions,id',
+                'governorates_id' => 'nullable|exists:governorates,id',
+                'city_id' => 'nullable|integer|exists:cities,id',
+                'area_id' => 'nullable|integer|exists:area,id',
+                'address' => 'nullable|string|max:255',
+                'is_featured' => 'nullable|boolean',
+                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed',
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+
+            $data = $validator->validated();
+            $data['slug'] = Str::slug($request->title . '-' . uniqid());
+            $data['status'] = 1;
+            $data['is_active'] = 1;
+            $data['is_featured'] = $request->boolean('is_featured', false);
+            $data['created_by'] = auth('admin-api')->id();
+
+            $listing = Listing::create($data);
+
+            $directory = 'listings/images';
+            if (! Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->makeDirectory($directory, 0775, true);
+            }
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $index => $image) {
+                    if ($index >= 20) break;
+                    $path = $image->store($directory, 'public');
+                    ListingImage::create([
+                        'listing_id' => $listing->id,
+                        'image_path' => $path,
+                        'alt_text' => $request->input("alt_text.$index", null),
+                        'order' => $index,
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Listing created successfully',
+                'data' => $listing->load(['images', 'category']),
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'data' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function adminUpdate(Request $request, $slug)
+    {
+        try {
+            $listing = Listing::where('slug', $slug)->first();
+
+            if (! $listing) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Listing not found',
+                ], 404);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'title' => 'sometimes|required|string|max:255',
+                'description' => 'sometimes|required|string',
+                'listing_type' => 'sometimes|required|string',
+                'category_id' => 'sometimes|required|exists:categories,id',
+                'condition' => ['sometimes', 'nullable', new Enum(ListingCondition::class)],
+                'start_price' => 'nullable|numeric|min:0',
+                'buy_now_price' => 'nullable|numeric|min:0',
+                'country_id' => 'nullable|exists:countries,id',
+                'regions_id' => 'nullable|exists:regions,id',
+                'governorates_id' => 'nullable|exists:governorates,id',
+                'city_id' => 'nullable|integer|exists:cities,id',
+                'area_id' => 'nullable|integer|exists:area,id',
+                'address' => 'nullable|string|max:255',
+                'is_featured' => 'nullable|boolean',
+                'images.*' => 'nullable|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validation failed',
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+
+            $data = $validator->validated();
+            if ($request->has('is_featured')) {
+                $data['is_featured'] = $request->boolean('is_featured');
+            }
+            $listing->update($data);
+
+            if ($request->hasFile('images')) {
+                $directory = 'listings/images';
+                if (! Storage::disk('public')->exists($directory)) {
+                    Storage::disk('public')->makeDirectory($directory, 0775, true);
+                }
+                $maxOrder = $listing->images()->max('order') ?? -1;
+                foreach ($request->file('images') as $index => $image) {
+                    $path = $image->store($directory, 'public');
+                    ListingImage::create([
+                        'listing_id' => $listing->id,
+                        'image_path' => $path,
+                        'alt_text' => $request->input("alt_text.$index", null),
+                        'order' => $maxOrder + $index + 1,
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Listing updated successfully',
+                'data' => $listing->fresh()->load(['images', 'category']),
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong',
+                'data' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function toggleFeatured($slug)
+    {
+        $listing = Listing::where('slug', $slug)->first();
+
+        if (! $listing) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Listing not found',
+            ], 404);
+        }
+
+        $listing->is_featured = ! $listing->is_featured;
+        $listing->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => $listing->is_featured ? 'Listing marked as featured' : 'Listing unfeatured',
+            'data' => [
+                'slug' => $listing->slug,
+                'is_featured' => $listing->is_featured,
+            ],
+        ]);
     }
 }

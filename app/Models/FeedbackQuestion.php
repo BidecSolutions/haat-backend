@@ -10,6 +10,7 @@ class FeedbackQuestion extends Model
         'form_id',
         'question_text',
         'question_text_ar',
+        'question_text_bn',
         'type',
         'is_required',
         'order',

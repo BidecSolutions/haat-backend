@@ -14,14 +14,21 @@ class AreaController extends Controller
     public function index(Request $request)
     {
         // Defaults
-        $limit = (int) $request->get('limit');
+        $limit = (int) $request->get('limit') ?: 500;
         $offset = (int) $request->get('offset');
         $search = $request->get('search');
         $cityId = $request->get('city_id');
+        $countryId = $request->get('country_id');
+        $cityIds = $countryId && !$cityId
+            ? \App\Models\City::whereIn('region_id', \App\Models\Regions::where('country_id', $countryId)->pluck('id'))->pluck('id')->toArray()
+            : [];
 
         $query = Area::with('city')
             ->when($cityId, function ($q) use ($cityId) {
                 $q->where('city_id', $cityId);
+            })
+            ->when(!empty($cityIds), function ($q) use ($cityIds) {
+                $q->whereIn('city_id', $cityIds);
             })
             ->when($search, function ($q) use ($search) {
                 $q->where('name', 'LIKE', '%'.$search.'%');

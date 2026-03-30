@@ -114,7 +114,15 @@
             </div>
             <div class="copyright">
                 &copy; {{ date('Y') }} Haat. All rights reserved.<br>
-                This email was sent to {{ $notifiable->email ?? 'you' }}
+                @php
+                    $recipient = 'you';
+                    if (isset($user) && $user) {
+                        $recipient = $user->email ?? 'you';
+                    } elseif (isset($notifiable) && $notifiable) {
+                        $recipient = $notifiable->email ?? $notifiable->mail ?? 'you';
+                    }
+                @endphp
+                This email was sent to {{ $recipient }}
             </div>
         </div>
     </div>

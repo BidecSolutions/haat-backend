@@ -21,7 +21,7 @@ use App\Http\Controllers\EducationController;
 use App\Http\Controllers\FeedbackFormController;
 use App\Http\Controllers\FeedbackResponseController;
 use App\Http\Controllers\ServiceBookingController;
-use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\Api\ServiceController as ApiServiceController;
 use App\Models\FeedbackForm;
 use Illuminate\Support\Facades\Route;
 
@@ -114,6 +114,15 @@ Route::prefix('user')->group(function () {
             Route::get('/recommendations', 'recommendations');
         });
 
+        // Job listing routes (frontend expects /user/job-listing/...)
+        Route::prefix('job-listing')->controller(ListingController::class)->group(function () {
+            Route::post('/store', 'store');
+            Route::get('/myJobs', 'myJobs');
+            Route::get('/{slug}/show', 'show');
+            Route::post('/{slug}/update', 'update');
+            Route::delete('/{idOrSlug}/destroy', 'destroyByIdOrSlug');
+        });
+
         Route::prefix('listings')->controller(ListingReportController::class)->group(function () {
             Route::post('{listingSlug}/report', 'store');
         });
@@ -186,6 +195,11 @@ Route::prefix('user')->group(function () {
             Route::post('/{comment}/reply', 'reply');
             Route::post('/{comment}/update', 'update');
             Route::delete('/{comment}/delete', 'destroy');
+        });
+
+        // Service listing routes (frontend expects /user/services/...)
+        Route::prefix('services')->controller(ApiServiceController::class)->group(function () {
+            Route::post('/store', 'store');
         });
     });
 });

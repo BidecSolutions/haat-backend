@@ -289,7 +289,7 @@ class UserController extends Controller
                 }
 
                 $data['customer_number'] = $customerNumber;
-                $data['created_by'] = auth('api')->id();
+                $data['created_by'] = auth('admin-api')->id() ?? auth('api')->id();
 
                 return User::create($data);
             });

@@ -10,7 +10,7 @@ class Regions extends Model
     //
     use HasFactory;
     protected $table = 'regions';
-    protected $fillable = ['name', 'name_ar'];
+    protected $fillable = ['name', 'name_ar', 'country_id'];
 
     public function governorates()
     {
