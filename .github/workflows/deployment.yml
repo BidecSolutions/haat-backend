@@ -16,8 +16,8 @@ jobs:
       pull-requests: read
 
     env:
-      APP_DIR: /opt/apps/haat-backend/production/backend
-      COMPOSE_FILE: /opt/apps/haat-backend/production/backend/compose.prod.yaml
+      APP_DIR: /opt/apps/haat/production/backend
+      COMPOSE_FILE: /opt/apps/haat/production/backend/compose.prod.yaml
       SSH_PORT_DEFAULT: "22"
 
     steps:
