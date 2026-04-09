@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-# Ensure storage directory structure exists
 mkdir -p /var/www/storage/app/public \
          /var/www/storage/framework/cache/data \
          /var/www/storage/framework/sessions \
@@ -10,7 +9,7 @@ mkdir -p /var/www/storage/app/public \
          /var/www/storage/logs
 
 php artisan package:discover --ansi
-php artisan migrate --force
+php artisan migrate --force || echo "[warn] migrate had errors - continuing"
 php artisan optimize:clear
 
 exec "$@"
