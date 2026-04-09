@@ -106,7 +106,7 @@ jobs:
         if: success()
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: bidecsol.com
+          server_address: mail.bidecsol.com
           server_port: 465
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
@@ -127,7 +127,7 @@ jobs:
         if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: bidecsol.com
+          server_address: mail.bidecsol.com
           server_port: 465
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}

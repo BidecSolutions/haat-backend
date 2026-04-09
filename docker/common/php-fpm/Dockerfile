@@ -1,7 +1,6 @@
 # Stage 1: Build environment and Composer dependencies
 FROM php:8.4-fpm AS builder
 
-# Install build deps + PHP extensions needed by the app (build stage)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
@@ -35,26 +34,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 WORKDIR /var/www
-
-# Copy app
 COPY . /var/www
-
-# Install Composer (recommended way) + PHP deps
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-# Install PHP dependencies
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --no-progress \
-    --prefer-dist
+    --prefer-dist \
+    --no-scripts
 
 
 # Stage 2: Production image
 FROM php:8.4-fpm AS production
 
-# Runtime libs needed by compiled extensions (gd) + healthcheck tooling
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libicu-dev \
@@ -69,32 +63,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Download and install php-fpm health check script
 RUN curl -o /usr/local/bin/php-fpm-healthcheck \
     https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck \
     && chmod +x /usr/local/bin/php-fpm-healthcheck
 
-# Entrypoint
 COPY ./docker/production/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Copy initial storage structure
 COPY ./storage /var/www/storage-init
 
-# Copy PHP extensions + INI conf from builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 
-# Use production php.ini
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Copy application code (including vendor) from builder
 COPY --from=builder /var/www /var/www
 
 WORKDIR /var/www
 
-# Permissions
 RUN chown -R www-data:www-data /var/www
 
 USER www-data
