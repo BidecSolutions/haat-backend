@@ -1,3 +1,3 @@
 # Deployment Test
 
-Pipeline retest after fixing storage COPY issue in Dockerfile.
+Retest after fixing bootstrap/cache missing directory.
