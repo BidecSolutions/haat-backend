@@ -120,7 +120,7 @@ jobs:
 
             Commits:
             ${{ steps.pr-commits.outputs.list }}
-          to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
+          to: enganaskhalid@gmail.com
           from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
 
       - name: Send failure email
@@ -144,5 +144,5 @@ jobs:
 
             Commits:
             ${{ steps.pr-commits.outputs.list }}
-          to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
+          to: enganaskhalid@gmail.com
           from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
