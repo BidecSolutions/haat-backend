@@ -70,14 +70,6 @@ RUN curl -o /usr/local/bin/php-fpm-healthcheck \
 COPY ./docker/production/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Create Laravel storage directory structure
-RUN mkdir -p /var/www/storage/app/public \
-             /var/www/storage/framework/cache/data \
-             /var/www/storage/framework/sessions \
-             /var/www/storage/framework/testing \
-             /var/www/storage/framework/views \
-             /var/www/storage/logs
-
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
@@ -85,6 +77,15 @@ COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 COPY --from=builder /var/www /var/www
+
+# Create required writable directories not tracked by git
+RUN mkdir -p /var/www/bootstrap/cache \
+             /var/www/storage/app/public \
+             /var/www/storage/framework/cache/data \
+             /var/www/storage/framework/sessions \
+             /var/www/storage/framework/testing \
+             /var/www/storage/framework/views \
+             /var/www/storage/logs
 
 WORKDIR /var/www
 
