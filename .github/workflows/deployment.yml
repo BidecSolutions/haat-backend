@@ -1,0 +1,148 @@
+name: Docker Deploy (Laravel Backend) — Production
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    env:
+      APP_DIR: /opt/apps/haat-backend/production/backend
+      COMPOSE_FILE: /opt/apps/haat-backend/production/backend/compose.prod.yaml
+      SSH_PORT_DEFAULT: "22"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get PR commits
+        id: pr-commits
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            const lines = commits.map(c => {
+              const author = c.author ? c.author.login : (c.commit.author?.name || 'Unknown');
+              return `- ${c.sha.substring(0, 7)} (${author}) ${c.commit.message.split('\n')[0]}`;
+            });
+            core.setOutput('list', lines.join('\n'));
+
+      - name: Prepare SSH key
+        run: |
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+
+      - name: Resolve SSH port
+        run: |
+          if [ -n "${{ secrets.DEPLOY_PORT }}" ]; then
+            echo "SSH_PORT=${{ secrets.DEPLOY_PORT }}" >> $GITHUB_ENV
+          else
+            echo "SSH_PORT=${{ env.SSH_PORT_DEFAULT }}" >> $GITHUB_ENV
+          fi
+
+      - name: Ensure server directory exists
+        run: |
+          ssh -i /tmp/deploy_key -p "$SSH_PORT" -o StrictHostKeyChecking=no \
+          ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+          "mkdir -p '${{ env.APP_DIR }}'"
+
+      - name: Upload project to server (rsync)
+        run: |
+          RSYNC_SSH="ssh -i /tmp/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=no"
+          rsync -rz --delete \
+            --omit-dir-times --no-times \
+            --no-perms --no-owner --no-group \
+            --exclude ".git" \
+            --exclude "node_modules" \
+            --exclude ".env" \
+            --exclude "storage" \
+            --exclude "bootstrap/cache" \
+            -e "$RSYNC_SSH" \
+            ./ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ env.APP_DIR }}
+
+      - name: Deploy on server (docker compose)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ env.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 45m
+          script: |
+            set -e
+            cd "${{ env.APP_DIR }}"
+
+            test -f artisan       || (echo "ERROR: artisan missing" && exit 1)
+            test -f composer.json || (echo "ERROR: composer.json missing" && exit 1)
+            test -f compose.prod.yaml || (echo "ERROR: compose.prod.yaml missing" && exit 1)
+
+            if [ ! -f .env ]; then
+              [ -f .env.example ] && cp .env.example .env || (echo "ERROR: .env not found" && exit 1)
+            fi
+
+            docker compose -f compose.prod.yaml down || true
+
+            DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 \
+            docker compose -f compose.prod.yaml up -d --build
+
+            docker image prune -f
+
+      - name: Send success email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: bidecsol.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "[Deployment Success] haat-backend: production"
+          body: |
+            Deployment to production successful.
+
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+
+            Commits:
+            ${{ steps.pr-commits.outputs.list }}
+          to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
+          from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
+
+      - name: Send failure email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: bidecsol.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "[Deployment Failed] haat-backend: production"
+          body: |
+            Deployment to production failed.
+
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+
+            Workflow:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Commits:
+            ${{ steps.pr-commits.outputs.list }}
+          to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
+          from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
