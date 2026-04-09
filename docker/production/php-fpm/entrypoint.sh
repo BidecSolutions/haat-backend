@@ -10,6 +10,7 @@ mkdir -p /var/www/storage/app/public \
          /var/www/storage/logs
 
 php artisan package:discover --ansi
+php artisan migrate --force
 php artisan optimize:clear
 
 exec "$@"
