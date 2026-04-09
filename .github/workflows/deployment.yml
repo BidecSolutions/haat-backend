@@ -1,10 +1,10 @@
-name: Docker Deploy (Laravel Backend)
+name: Docker Deploy (Laravel Backend) — Production
 
 on:
   pull_request:
     types: [closed]
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
@@ -34,15 +34,10 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number
             });
-
             const lines = commits.map(c => {
-              const author = c.author
-                ? c.author.login
-                : (c.commit.author?.name || 'Unknown');
-
+              const author = c.author ? c.author.login : (c.commit.author?.name || 'Unknown');
               return `- ${c.sha.substring(0, 7)} (${author}) ${c.commit.message.split('\n')[0]}`;
             });
-
             core.setOutput('list', lines.join('\n'));
 
       - name: Prepare SSH key
@@ -67,7 +62,6 @@ jobs:
       - name: Upload project to server (rsync)
         run: |
           RSYNC_SSH="ssh -i /tmp/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=no"
-
           rsync -rz --delete \
             --omit-dir-times --no-times \
             --no-perms --no-owner --no-group \
@@ -91,36 +85,21 @@ jobs:
           command_timeout: 45m
           script: |
             set -e
+            cd "${{ env.APP_DIR }}"
 
-            APP_DIR="${{ env.APP_DIR }}"
-            COMPOSE_FILE="${{ env.COMPOSE_FILE }}"
-
-            cd "$APP_DIR"
-
-            echo "== Verify required files =="
-            test -f artisan || (echo "ERROR: artisan missing" && exit 1)
+            test -f artisan       || (echo "ERROR: artisan missing" && exit 1)
             test -f composer.json || (echo "ERROR: composer.json missing" && exit 1)
             test -f compose.prod.yaml || (echo "ERROR: compose.prod.yaml missing" && exit 1)
 
-            echo "== Ensure .env exists =="
             if [ ! -f .env ]; then
-              if [ -f .env.example ]; then
-                cp .env.example .env
-                echo ".env created from .env.example"
-              else
-                echo "ERROR: .env not found"
-                exit 1
-              fi
+              [ -f .env.example ] && cp .env.example .env || (echo "ERROR: .env not found" && exit 1)
             fi
 
-            echo "== Stop old containers =="
             docker compose -f compose.prod.yaml down || true
 
-            echo "== Build & start containers (BuildKit disabled) =="
             DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 \
             docker compose -f compose.prod.yaml up -d --build
 
-            echo "== Clear unused images =="
             docker image prune -f
 
       - name: Send success email
@@ -132,16 +111,15 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Deployment Success] haat-backend-prod: develop"
+          subject: "[Deployment Success] haat-backend: production"
           body: |
-            Deployment successful.
+            Deployment to production successful.
 
             Commit: ${{ github.sha }}
             Branch: ${{ github.ref_name }}
 
             Commits:
             ${{ steps.pr-commits.outputs.list }}
-
           to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
           from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
 
@@ -154,9 +132,9 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Deployment Failed] haat-backend-prod: develop"
+          subject: "[Deployment Failed] haat-backend: production"
           body: |
-            Deployment failed.
+            Deployment to production failed.
 
             Commit: ${{ github.sha }}
             Branch: ${{ github.ref_name }}
@@ -166,6 +144,5 @@ jobs:
 
             Commits:
             ${{ steps.pr-commits.outputs.list }}
-
           to: yasir@bidecsol.com,hamza@bidecsol.com,taha@bidecsol.com,Danyalahsansiddiqi@gmail.com,enganaskhalid@gmail.com,nawazali20@gmail.com,sultanharis600@gmail.com
           from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
