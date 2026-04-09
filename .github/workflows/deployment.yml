@@ -63,7 +63,7 @@ jobs:
         run: |
           RSYNC_SSH="ssh -i /tmp/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=no"
           rsync -rz --delete \
-            --omit-dir-times --no-times \
+            --checksum \
             --no-perms --no-owner --no-group \
             --exclude ".git" \
             --exclude "node_modules" \
@@ -95,9 +95,7 @@ jobs:
               [ -f .env.example ] && cp .env.example .env || (echo "ERROR: .env not found" && exit 1)
             fi
 
-            docker compose -f compose.prod.yaml down || true
-
-            DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 \
+            DOCKER_BUILDKIT=1 \
             docker compose -f compose.prod.yaml up -d --build
 
             docker image prune -f
