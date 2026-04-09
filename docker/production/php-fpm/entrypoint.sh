@@ -1,13 +1,13 @@
 #!/bin/sh
 set -e
 
-if [ ! "$(ls -A /var/www/storage)" ]; then
-  echo "Initializing storage directory..."
-  cp -R /var/www/storage-init/. /var/www/storage
-  chown -R www-data:www-data /var/www/storage
-fi
-
-rm -rf /var/www/storage-init
+# Ensure storage directory structure exists
+mkdir -p /var/www/storage/app/public \
+         /var/www/storage/framework/cache/data \
+         /var/www/storage/framework/sessions \
+         /var/www/storage/framework/testing \
+         /var/www/storage/framework/views \
+         /var/www/storage/logs
 
 php artisan package:discover --ansi
 php artisan optimize:clear

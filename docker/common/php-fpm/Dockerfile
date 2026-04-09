@@ -70,7 +70,13 @@ RUN curl -o /usr/local/bin/php-fpm-healthcheck \
 COPY ./docker/production/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-COPY ./storage /var/www/storage-init
+# Create Laravel storage directory structure
+RUN mkdir -p /var/www/storage/app/public \
+             /var/www/storage/framework/cache/data \
+             /var/www/storage/framework/sessions \
+             /var/www/storage/framework/testing \
+             /var/www/storage/framework/views \
+             /var/www/storage/logs
 
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
