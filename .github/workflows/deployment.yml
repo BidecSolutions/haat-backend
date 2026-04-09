@@ -6,10 +6,15 @@ on:
     branches:
       - main
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     permissions:
       contents: read
@@ -17,28 +22,31 @@ jobs:
 
     env:
       APP_DIR: /opt/apps/haat/production/backend
-      COMPOSE_FILE: /opt/apps/haat/production/backend/compose.prod.yaml
       SSH_PORT_DEFAULT: "22"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get PR commits
-        id: pr-commits
+      - name: Get PR info
+        id: pr-info
         uses: actions/github-script@v7
         with:
           script: |
+            const pr = context.payload.pull_request;
             const { data: commits } = await github.rest.pulls.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
+              pull_number: pr.number
             });
             const lines = commits.map(c => {
               const author = c.author ? c.author.login : (c.commit.author?.name || 'Unknown');
-              return `- ${c.sha.substring(0, 7)} (${author}) ${c.commit.message.split('\n')[0]}`;
+              return `  • ${c.sha.substring(0, 7)} (${author}) ${c.commit.message.split('\n')[0]}`;
             });
-            core.setOutput('list', lines.join('\n'));
+            core.setOutput('commits', lines.join('\n'));
+            core.setOutput('pr_title', pr.title);
+            core.setOutput('pr_number', String(pr.number));
+            core.setOutput('merged_by', pr.merged_by?.login || 'unknown');
 
       - name: Prepare SSH key
         run: |
@@ -82,7 +90,7 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ env.SSH_PORT }}
           timeout: 60s
-          command_timeout: 45m
+          command_timeout: 25m
           script: |
             set -e
             cd "${{ env.APP_DIR }}"
@@ -95,10 +103,29 @@ jobs:
               [ -f .env.example ] && cp .env.example .env || (echo "ERROR: .env not found" && exit 1)
             fi
 
-            DOCKER_BUILDKIT=1 \
-            docker compose -f compose.prod.yaml up -d --build
-
+            DOCKER_BUILDKIT=1 docker compose -f compose.prod.yaml up -d --build
             docker image prune -f
+
+      - name: Verify container health
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ env.SSH_PORT }}
+          timeout: 60s
+          command_timeout: 2m
+          script: |
+            echo "Waiting for container to become healthy..."
+            for i in $(seq 1 18); do
+              STATUS=$(docker inspect --format='{{.State.Health.Status}}' haat-production-php-fpm-1 2>/dev/null || echo "missing")
+              echo "  [$i/18] $STATUS"
+              [ "$STATUS" = "healthy" ] && echo "Container is healthy" && exit 0
+              sleep 5
+            done
+            echo "ERROR: Container not healthy after 90s — last logs:"
+            docker logs haat-production-php-fpm-1 --tail=30 2>&1
+            exit 1
 
       - name: Send success email
         if: success()
@@ -109,17 +136,26 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Deployment Success] haat-backend: production"
+          subject: "✅ HAAT Backend · Production — Deployed"
           body: |
-            Deployment to production successful.
+            ✅  Deployment to PRODUCTION succeeded
 
-            Commit: ${{ github.sha }}
-            Branch: ${{ github.ref_name }}
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             App         HAAT Backend
+             Environment Production
+             URL         https://api.spacesaverzone.com
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             PR #${{ steps.pr-info.outputs.pr_number }}    ${{ steps.pr-info.outputs.pr_title }}
+             Merged by   ${{ steps.pr-info.outputs.merged_by }}
+             Commit      ${{ github.sha }}
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-            Commits:
-            ${{ steps.pr-commits.outputs.list }}
-          to: enganaskhalid@gmail.com
-          from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
+            Changes:
+            ${{ steps.pr-info.outputs.commits }}
+
+            🔗 ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: enganaskhalid@gmail.com, syedhasssan93@gmail.com
+          from: "HAAT Backend — Production <${{ secrets.EMAIL_USERNAME }}>"
 
       - name: Send failure email
         if: failure()
@@ -130,17 +166,23 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[Deployment Failed] haat-backend: production"
+          subject: "❌ HAAT Backend · Production — Failed"
           body: |
-            Deployment to production failed.
+            ❌  Deployment to PRODUCTION failed
 
-            Commit: ${{ github.sha }}
-            Branch: ${{ github.ref_name }}
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             App         HAAT Backend
+             Environment Production
+             URL         https://api.spacesaverzone.com
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+             PR #${{ steps.pr-info.outputs.pr_number }}    ${{ steps.pr-info.outputs.pr_title }}
+             Merged by   ${{ steps.pr-info.outputs.merged_by }}
+             Commit      ${{ github.sha }}
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-            Workflow:
-            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Changes:
+            ${{ steps.pr-info.outputs.commits }}
 
-            Commits:
-            ${{ steps.pr-commits.outputs.list }}
-          to: enganaskhalid@gmail.com
-          from: "BidecSolutions <${{ secrets.EMAIL_USERNAME }}>"
+            🔗 View logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          to: enganaskhalid@gmail.com, syedhasssan93@gmail.com
+          from: "HAAT Backend — Production <${{ secrets.EMAIL_USERNAME }}>"
