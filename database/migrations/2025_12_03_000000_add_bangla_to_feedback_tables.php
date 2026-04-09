@@ -10,16 +10,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('feedback_forms', function (Blueprint $table) {
-            $table->string('title_bn')->nullable()->after('title_ar');
-            $table->text('description_bn')->nullable()->after('description_ar');
+            if (!Schema::hasColumn('feedback_forms', 'title_bn')) {
+                $table->string('title_bn')->nullable()->after('title_ar');
+            }
+            if (!Schema::hasColumn('feedback_forms', 'description_bn')) {
+                $table->text('description_bn')->nullable()->after('description_ar');
+            }
         });
 
         Schema::table('feedback_questions', function (Blueprint $table) {
-            $table->text('question_text_bn')->nullable()->after('question_text_ar');
+            if (!Schema::hasColumn('feedback_questions', 'question_text_bn')) {
+                $table->text('question_text_bn')->nullable()->after('question_text_ar');
+            }
         });
 
         Schema::table('feedback_question_options', function (Blueprint $table) {
-            $table->string('option_label_bn')->nullable()->after('option_label_ar');
+            if (!Schema::hasColumn('feedback_question_options', 'option_label_bn')) {
+                $table->string('option_label_bn')->nullable()->after('option_label_ar');
+            }
         });
 
         // Populate Bangla for existing feedback form (matches boli/Haat seeder)
